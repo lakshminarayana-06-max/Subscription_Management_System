@@ -196,9 +196,9 @@ Then open your browser to:
 
 #### Switching Roles during Demo:
 Use the **Role Dropdown** in the top right header:
-- **Administrator** (`admin@brightloop.com`): Full access to all 13 modules, discounts, staff creation, and analytics.
-- **Internal Staff** (`staff@brightloop.com`): Customer management, quotations, subscriptions, invoices, and payments.
-- **Customer** (`billing@zenithinfotech.in`): Customer self-service portal with strict record isolation.
+- **Administrator** (`admin@gmail.com` / `admin@123`): Full access to all 13 modules, discounts, staff creation, and analytics.
+- **Internal Staff** (`staff@gmail.com` / `staff@123`): Customer management, quotations, subscriptions, invoices, and payments.
+- **Customer** (`cust@gmail.com` / `cust@123`): Customer self-service portal with strict record isolation.
 
 ---
 

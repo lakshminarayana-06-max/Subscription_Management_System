@@ -27,9 +27,9 @@ def main():
 
     print("\nStarting Web Application Server on http://localhost:8069 ...")
     print("Login Roles available in the topbar:")
-    print(" - Admin: admin@brightloop.com (Full access)")
-    print(" - Staff: staff@brightloop.com (Operations & Billing)")
-    print(" - Customer: billing@zenithinfotech.in (Self-Service Portal)")
+    print(" - Admin: admin@gmail.com (Full access)")
+    print(" - Staff: staff@gmail.com (Operations & Billing)")
+    print(" - Customer: cust@gmail.com (Self-Service Portal)")
     print("==================================================================\n")
 
     uvicorn.run("brightloop_app.app:app", host="127.0.0.1", port=8069, reload=False, log_level="info")

@@ -42,7 +42,10 @@ class ResUsers(models.Model):
         - At least 1 uppercase letter
         - At least 1 lowercase letter
         - At least 1 special character
+        Allows demo hackathon credentials (admin@123, staff@123, cust@123).
         """
+        if password in ['admin@123', 'staff@123', 'cust@123']:
+            return True
         if not password or len(password) <= 8:
             raise ValidationError(_("Password must be strictly longer than 8 characters."))
         if not re.search(r'[A-Z]', password):

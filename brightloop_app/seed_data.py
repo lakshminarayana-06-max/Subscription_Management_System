@@ -44,24 +44,24 @@ def seed():
             # 1. Admin
             cur.execute("""
                 INSERT INTO res_users (name, login, password_hash, role)
-                VALUES ('Rajesh Sharma (Admin)', 'admin@brightloop.com', %s, 'admin');
-            """, (hash_password('BrightLoop@Admin2026!'),))
+                VALUES ('Rajesh Sharma (Admin)', 'admin@gmail.com', %s, 'admin');
+            """, (hash_password('admin@123'),))
 
             # 2. Staff
             cur.execute("""
                 INSERT INTO res_users (name, login, password_hash, role)
-                VALUES ('Pooja Verma (Billing Staff)', 'staff@brightloop.com', %s, 'staff');
-            """, (hash_password('BrightLoop@Staff2026!'),))
+                VALUES ('Pooja Verma (Billing Staff)', 'staff@gmail.com', %s, 'staff');
+            """, (hash_password('staff@123'),))
 
             # 3. Customer
             cur.execute("""
                 INSERT INTO res_users (name, login, password_hash, role)
-                VALUES ('Vikram Malhotra (Zenith Infotech)', 'billing@zenithinfotech.in', %s, 'customer');
-            """, (hash_password('Zenith@Customer2026!'),))
+                VALUES ('Vikram Malhotra (Zenith Infotech)', 'cust@gmail.com', %s, 'customer');
+            """, (hash_password('cust@123'),))
 
             print("Seeding 15 Customers...")
             customers = [
-                ("Zenith Infotech Pvt Ltd", "billing@zenithinfotech.in", "+91 98765 43210", "102 Electronic City Phase 1", "Bengaluru", "29AAACZ1234F1Z5"),
+                ("Zenith Infotech Pvt Ltd", "cust@gmail.com", "+91 98765 43210", "102 Electronic City Phase 1", "Bengaluru", "29AAACZ1234F1Z5"),
                 ("Bharat Cloud Solutions", "billing@bharatcloud.co.in", "+91 98111 22334", "45 Okhla Industrial Area", "New Delhi", "07AABCB5678H1Z2"),
                 ("Apex Retailers Network", "accounts@apexretail.com", "+91 94440 98765", "88 Anna Salai", "Chennai", "33AACCA9988D1Z9"),
                 ("Mumbai FinServe Corp", "info@mumbaifinserve.in", "+91 99200 11223", "14 Nariman Point", "Mumbai", "27AADCM3344K1Z4"),

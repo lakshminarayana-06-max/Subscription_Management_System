@@ -36,7 +36,7 @@ templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
 CURRENT_SESSION = {
     'user_id': 1,
     'name': 'Rajesh Sharma',
-    'email': 'admin@brightloop.com',
+    'email': 'admin@gmail.com',
     'role': 'admin',
     'partner_id': None
 }
