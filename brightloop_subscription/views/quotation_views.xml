@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Quotation Tree View -->
+    <record id="view_brightloop_quotation_tree" model="ir.ui.view">
+        <field name="name">brightloop.quotation.tree</field>
+        <field name="model">brightloop.quotation</field>
+        <field name="arch" type="xml">
+            <tree string="Quotations" sample="1" decoration-info="state == 'quotation'" decoration-success="state == 'confirmed'" decoration-danger="state in ('expired', 'cancelled')">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="plan_id"/>
+                <field name="quotation_date"/>
+                <field name="validity_date"/>
+                <field name="amount_total" widget="monetary"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="subscription_id"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'draft'"
+                       decoration-primary="state == 'quotation'"
+                       decoration-success="state == 'confirmed'"
+                       decoration-danger="state in ('expired', 'cancelled')"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Quotation Form View -->
+    <record id="view_brightloop_quotation_form" model="ir.ui.view">
+        <field name="name">brightloop.quotation.form</field>
+        <field name="model">brightloop.quotation</field>
+        <field name="arch" type="xml">
+            <form string="Subscription Quotation">
+                <header>
+                    <button name="action_send_quotation" string="Mark as Sent" type="object" class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_confirm" string="Confirm Order" type="object" class="btn-success" invisible="state not in ('draft', 'quotation')"/>
+                    <button name="action_convert_to_subscription" string="Convert to Subscription" type="object" class="btn-primary" invisible="state not in ('quotation', 'confirmed') or subscription_id != False"/>
+                    <button name="action_cancel" string="Cancel" type="object" class="btn-danger" invisible="state in ('confirmed', 'cancelled')"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,quotation,confirmed"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <span class="o_form_label">Quotation Reference</span>
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group name="quote_customer" string="Customer &amp; Template">
+                            <field name="partner_id" widget="res_partner_many2one" context="{'res_partner_search_mode': 'customer'}"/>
+                            <field name="template_id"/>
+                            <field name="plan_id"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group name="quote_validity" string="Quotation Dates">
+                            <field name="quotation_date"/>
+                            <field name="validity_days"/>
+                            <field name="validity_date"/>
+                            <field name="payment_terms_id"/>
+                            <field name="subscription_id" readonly="1" invisible="not subscription_id"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Quotation Lines">
+                            <field name="line_ids">
+                                <tree editable="bottom">
+                                    <field name="product_id"/>
+                                    <field name="name"/>
+                                    <field name="quantity"/>
+                                    <field name="unit_price" widget="monetary"/>
+                                    <field name="tax_ids" widget="many2many_tags"/>
+                                    <field name="price_subtotal" widget="monetary"/>
+                                    <field name="currency_id" invisible="1"/>
+                                </tree>
+                            </field>
+                            <group col="6" class="mt-2 mt-md-0">
+                                <group colspan="4"/>
+                                <group class="oe_subtotal_footer oe_right" colspan="2">
+                                    <field name="amount_untaxed" widget="monetary"/>
+                                    <field name="amount_tax" widget="monetary"/>
+                                    <div class="oe_subtotal_footer_separator oe_inline o_td_label">
+                                        <label for="amount_total"/>
+                                    </div>
+                                    <field name="amount_total" nolabel="1" class="oe_subtotal_footer_separator" widget="monetary"/>
+                                </group>
+                                <div class="clearfix"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Quotation Search View -->
+    <record id="view_brightloop_quotation_search" model="ir.ui.view">
+        <field name="name">brightloop.quotation.search</field>
+        <field name="model">brightloop.quotation</field>
+        <field name="arch" type="xml">
+            <search string="Search Quotations">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <filter string="Sent" name="filter_sent" domain="[('state', '=', 'quotation')]"/>
+                <filter string="Confirmed" name="filter_confirmed" domain="[('state', '=', 'confirmed')]"/>
+                <filter string="Expired" name="filter_expired" domain="[('state', '=', 'expired')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Customer" name="group_partner" context="{'group_by': 'partner_id'}"/>
+                    <filter string="Plan" name="group_plan" context="{'group_by': 'plan_id'}"/>
+                    <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_brightloop_quotations" model="ir.actions.act_window">
+        <field name="name">Quotations</field>
+        <field name="res_model">brightloop.quotation</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_brightloop_quotation_search"/>
+    </record>
+</odoo>

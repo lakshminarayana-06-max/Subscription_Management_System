@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- 15 Realistic Customers -->
+        <record id="customer_1" model="res.partner">
+            <field name="name">Zenith Infotech Pvt Ltd</field>
+            <field name="email">contact@zenithinfotech.in</field>
+            <field name="phone">+91 98765 43210</field>
+            <field name="street">102 Electronic City Phase 1</field>
+            <field name="city">Bengaluru</field>
+            <field name="vat">29AAACZ1234F1Z5</field>
+            <field name="customer_rank">1</field>
+        </record>
+        <record id="customer_2" model="res.partner">
+            <field name="name">Bharat Cloud Solutions</field>
+            <field name="email">billing@bharatcloud.co.in</field>
+            <field name="phone">+91 98111 22334</field>
+            <field name="street">45 Okhla Industrial Area</field>
+            <field name="city">New Delhi</field>
+            <field name="vat">07AABCB5678H1Z2</field>
+            <field name="customer_rank">1</field>
+        </record>
+        <record id="customer_3" model="res.partner">
+            <field name="name">Apex Retailers Network</field>
+            <field name="email">accounts@apexretail.com</field>
+            <field name="phone">+91 94440 98765</field>
+            <field name="street">88 Anna Salai</field>
+            <field name="city">Chennai</field>
+            <field name="vat">33AACCA9988D1Z9</field>
+            <field name="customer_rank">1</field>
+        </record>
+        <record id="customer_4" model="res.partner">
+            <field name="name">Mumbai FinServe Corp</field>
+            <field name="email">info@mumbaifinserve.in</field>
+            <field name="phone">+91 99200 11223</field>
+            <field name="street">14 Nariman Point</field>
+            <field name="city">Mumbai</field>
+            <field name="vat">27AADCM3344K1Z4</field>
+            <field name="customer_rank">1</field>
+        </record>
+        <record id="customer_5" model="res.partner">
+            <field name="name">Deccan Logistics Hub</field>
+            <field name="email">ops@deccanlogistics.com</field>
+            <field name="phone">+91 90000 55667</field>
+            <field name="street">23 HITEC City Madhapur</field>
+            <field name="city">Hyderabad</field>
+            <field name="vat">36AAECD7788L1Z6</field>
+            <field name="customer_rank">1</field>
+        </record>
+        <record id="customer_6" model="res.partner">
+            <field name="name">Kolkata Analytics Lab</field>
+            <field name="email">billing@kolkataanalytics.in</field>
+            <field name="phone">+91 98300 44556</field>
+            <field name="street">5 Park Street</field>
+            <field name="city">Kolkata</field>
+            <field name="vat">19AABCK1122P1Z0</field>
+            <field name="customer_rank">1</field>
+        </record>
+        <record id="customer_7" model="res.partner">
+            <field name="name">Gujarat AgroTech Ventures</field>
+            <field name="email">finance@agrotechguj.com</field>
+            <field name="phone">+91 97250 88990</field>
+            <field name="street">12 SG Highway</field>
+            <field name="city">Ahmedabad</field>
+            <field name="vat">24AAACG4455M1Z8</field>
+            <field name="customer_rank">1</field>
+        </record>
+        <record id="customer_8" model="res.partner">
+            <field name="name">Pune Software Forge</field>
+            <field name="email">admin@punesoftwareforge.in</field>
+            <field name="phone">+91 98600 66778</field>
+            <field name="street">7 Hinjewadi Phase 2</field>
+            <field name="city">Pune</field>
+            <field name="vat">27AAACP9900Q1Z3</field>
+            <field name="customer_rank">1</field>
+        </record>
+        <record id="customer_9" model="res.partner">
+            <field name="name">Jaipur Heritage Crafts</field>
+            <field name="email">orders@jaipurcrafts.co.in</field>
+            <field name="phone">+91 94140 22331</field>
+            <field name="street">101 MI Road</field>
+            <field name="city">Jaipur</field>
+            <field name="vat">08AAACJ7788R1Z1</field>
+            <field name="customer_rank">1</field>
+        </record>
+        <record id="customer_10" model="res.partner">
+            <field name="name">Cochin Marine Exports</field>
+            <field name="email">accounts@cochinmarine.in</field>
+            <field name="phone">+91 94470 33445</field>
+            <field name="street">34 Willingdon Island</field>
+            <field name="city">Kochi</field>
+            <field name="vat">32AAACC5566T1Z7</field>
+            <field name="customer_rank">1</field>
+        </record>
+        <record id="customer_11" model="res.partner">
+            <field name="name">Indore FoodTech Systems</field>
+            <field name="email">info@indorefoodtech.com</field>
+            <field name="phone">+91 98260 77889</field>
+            <field name="street">6 AB Road</field>
+            <field name="city">Indore</field>
+            <field name="vat">23AAACI8899U1Z5</field>
+            <field name="customer_rank">1</field>
+        </record>
+        <record id="customer_12" model="res.partner">
+            <field name="name">Chandigarh HealthCare Ltd</field>
+            <field name="email">procure@chandigarhhealth.in</field>
+            <field name="phone">+91 98720 11224</field>
+            <field name="street">17 Sector 17 Plaza</field>
+            <field name="city">Chandigarh</field>
+            <field name="vat">04AAACC2233W1Z9</field>
+            <field name="customer_rank">1</field>
+        </record>
+        <record id="customer_13" model="res.partner">
+            <field name="name">Lucknow Cyber Services</field>
+            <field name="email">contact@lucknowcyber.in</field>
+            <field name="phone">+91 94150 99887</field>
+            <field name="street">54 Hazratganj</field>
+            <field name="city">Lucknow</field>
+            <field name="vat">09AAACL4455X1Z2</field>
+            <field name="customer_rank">1</field>
+        </record>
+        <record id="customer_14" model="res.partner">
+            <field name="name">Surat Textile Dynamics</field>
+            <field name="email">billing@surattextile.co.in</field>
+            <field name="phone">+91 98250 55661</field>
+            <field name="street">9 Ring Road Market</field>
+            <field name="city">Surat</field>
+            <field name="vat">24AAACS6677Y1Z4</field>
+            <field name="customer_rank">1</field>
+        </record>
+        <record id="customer_15" model="res.partner">
+            <field name="name">Nagpur Logistics Express</field>
+            <field name="email">finance@nagpurlogistics.in</field>
+            <field name="phone">+91 98900 88776</field>
+            <field name="street">40 Wardha Road</field>
+            <field name="city">Nagpur</field>
+            <field name="vat">27AAACN1122Z1Z0</field>
+            <field name="customer_rank">1</field>
+        </record>
+
+        <!-- Brand Attribute & Values (including Odoo Brand +560) -->
+        <record id="product_attr_brand" model="product.attribute">
+            <field name="name">Software Brand / Edition</field>
+            <field name="create_variant">always</field>
+        </record>
+        <record id="attr_val_standard" model="product.attribute.value">
+            <field name="name">Standard Edition</field>
+            <field name="attribute_id" ref="product_attr_brand"/>
+        </record>
+        <record id="attr_val_odoo" model="product.attribute.value">
+            <field name="name">Odoo Brand Edition</field>
+            <field name="attribute_id" ref="product_attr_brand"/>
+        </record>
+        <record id="attr_val_enterprise" model="product.attribute.value">
+            <field name="name">Enterprise Custom Brand</field>
+            <field name="attribute_id" ref="product_attr_brand"/>
+        </record>
+
+        <!-- 10 Products -->
+        <record id="prod_cloud_erp" model="product.template">
+            <field name="name">Brightloop Cloud ERP</field>
+            <field name="list_price">2400.0</field>
+            <field name="standard_price">800.0</field>
+            <field name="type">service</field>
+            <field name="is_subscription_product">True</field>
+            <field name="description">All-in-one business software including Sales, Invoicing and Inventory</field>
+        </record>
+        <record id="prod_hrms_suite" model="product.template">
+            <field name="name">Brightloop HRMS Suite</field>
+            <field name="list_price">1500.0</field>
+            <field name="standard_price">500.0</field>
+            <field name="type">service</field>
+            <field name="is_subscription_product">True</field>
+        </record>
+        <record id="prod_billing_api" model="product.template">
+            <field name="name">Automated Billing API Connector</field>
+            <field name="list_price">1800.0</field>
+            <field name="standard_price">400.0</field>
+            <field name="type">service</field>
+            <field name="is_subscription_product">True</field>
+        </record>
+        <record id="prod_whatsapp_gateway" model="product.template">
+            <field name="name">WhatsApp Business Gateway</field>
+            <field name="list_price">950.0</field>
+            <field name="standard_price">250.0</field>
+            <field name="type">service</field>
+            <field name="is_subscription_product">True</field>
+        </record>
+        <record id="prod_crm_pro" model="product.template">
+            <field name="name">Brightloop CRM Pro</field>
+            <field name="list_price">1200.0</field>
+            <field name="standard_price">350.0</field>
+            <field name="type">service</field>
+            <field name="is_subscription_product">True</field>
+        </record>
+        <record id="prod_analytics_engine" model="product.template">
+            <field name="name">Real-Time Revenue Analytics Engine</field>
+            <field name="list_price">3000.0</field>
+            <field name="standard_price">1000.0</field>
+            <field name="type">service</field>
+            <field name="is_subscription_product">True</field>
+        </record>
+        <record id="prod_cloud_storage" model="product.template">
+            <field name="name">Secure Cloud Storage 500GB</field>
+            <field name="list_price">600.0</field>
+            <field name="standard_price">150.0</field>
+            <field name="type">service</field>
+            <field name="is_subscription_product">True</field>
+        </record>
+        <record id="prod_sla_booster" model="product.template">
+            <field name="name">24/7 Priority SLA Booster</field>
+            <field name="list_price">2500.0</field>
+            <field name="standard_price">900.0</field>
+            <field name="type">service</field>
+            <field name="is_subscription_product">True</field>
+        </record>
+        <record id="prod_security_shield" model="product.template">
+            <field name="name">Advanced Enterprise Security Shield</field>
+            <field name="list_price">1750.0</field>
+            <field name="standard_price">600.0</field>
+            <field name="type">service</field>
+            <field name="is_subscription_product">True</field>
+        </record>
+        <record id="prod_custom_theme" model="product.template">
+            <field name="name">Custom White-Label Portal Theme</field>
+            <field name="list_price">850.0</field>
+            <field name="standard_price">200.0</field>
+            <field name="type">service</field>
+            <field name="is_subscription_product">True</field>
+        </record>
+
+        <!-- 5 Subscription Plans -->
+        <record id="plan_daily_trial" model="brightloop.subscription.plan">
+            <field name="name">Daily Developer Sandbox</field>
+            <field name="billing_frequency">daily</field>
+            <field name="price">150.0</field>
+            <field name="min_quantity">1</field>
+            <field name="product_id" ref="prod_cloud_erp"/>
+            <field name="auto_close">True</field>
+            <field name="early_closure_allowed">True</field>
+            <field name="pause_allowed">True</field>
+            <field name="renewal_allowed">True</field>
+            <field name="description">Daily automated developer testing environment with instant provisioning.</field>
+        </record>
+
+        <record id="plan_weekly_starter" model="brightloop.subscription.plan">
+            <field name="name">Weekly Agile Starter</field>
+            <field name="billing_frequency">weekly</field>
+            <field name="price">650.0</field>
+            <field name="min_quantity">1</field>
+            <field name="product_id" ref="prod_crm_pro"/>
+            <field name="auto_close">False</field>
+            <field name="early_closure_allowed">True</field>
+            <field name="pause_allowed">True</field>
+            <field name="renewal_allowed">True</field>
+            <field name="description">Flexible weekly billing designed for sprint-based agile projects.</field>
+        </record>
+
+        <record id="plan_monthly_pro" model="brightloop.subscription.plan">
+            <field name="name">Monthly Business Pro</field>
+            <field name="billing_frequency">monthly</field>
+            <field name="price">2400.0</field>
+            <field name="min_quantity">1</field>
+            <field name="product_id" ref="prod_cloud_erp"/>
+            <field name="auto_close">False</field>
+            <field name="early_closure_allowed">True</field>
+            <field name="pause_allowed">True</field>
+            <field name="renewal_allowed">True</field>
+            <field name="description">Most popular monthly recurring plan for growing businesses.</field>
+        </record>
+
+        <record id="plan_yearly_enterprise" model="brightloop.subscription.plan">
+            <field name="name">Yearly Enterprise Platinum</field>
+            <field name="billing_frequency">yearly</field>
+            <field name="price">25000.0</field>
+            <field name="min_quantity">5</field>
+            <field name="product_id" ref="prod_analytics_engine"/>
+            <field name="auto_close">False</field>
+            <field name="early_closure_allowed">False</field>
+            <field name="pause_allowed">False</field>
+            <field name="renewal_allowed">True</field>
+            <field name="description">Annual enterprise contract with dedicated support and SLA guarantees.</field>
+        </record>
+
+        <record id="plan_custom_flexi" model="brightloop.subscription.plan">
+            <field name="name">Custom High-Volume Flexi</field>
+            <field name="billing_frequency">monthly</field>
+            <field name="price">4500.0</field>
+            <field name="min_quantity">10</field>
+            <field name="product_id" ref="prod_billing_api"/>
+            <field name="auto_close">True</field>
+            <field name="early_closure_allowed">True</field>
+            <field name="pause_allowed">True</field>
+            <field name="renewal_allowed">True</field>
+            <field name="description">High-volume usage tier with tiered API call volumes.</field>
+        </record>
+
+        <!-- Discount Rules -->
+        <record id="discount_early_bird" model="brightloop.discount.rule">
+            <field name="name">Early Bird 15% Off</field>
+            <field name="discount_type">percent</field>
+            <field name="value">15.0</field>
+            <field name="min_purchase_amount">1000.0</field>
+            <field name="min_quantity">1.0</field>
+            <field name="max_usage_count">50</field>
+            <field name="current_usage_count">12</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="discount_volume_fixed" model="brightloop.discount.rule">
+            <field name="name">Enterprise Volume ₹2000 Off</field>
+            <field name="discount_type">fixed</field>
+            <field name="value">2000.0</field>
+            <field name="min_purchase_amount">15000.0</field>
+            <field name="min_quantity">5.0</field>
+            <field name="max_usage_count">20</field>
+            <field name="current_usage_count">6</field>
+            <field name="active">True</field>
+        </record>
+    </data>
+</odoo>

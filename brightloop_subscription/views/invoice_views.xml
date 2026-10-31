@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Subscription Invoice Tree View -->
+    <record id="view_brightloop_invoice_tree" model="ir.ui.view">
+        <field name="name">brightloop.invoice.tree</field>
+        <field name="model">account.move</field>
+        <field name="arch" type="xml">
+            <tree string="Invoices" sample="1" decoration-danger="is_overdue == True">
+                <field name="name" string="Invoice Number"/>
+                <field name="partner_id" string="Customer"/>
+                <field name="subscription_id" string="Subscription"/>
+                <field name="invoice_date"/>
+                <field name="invoice_date_due"/>
+                <field name="billing_period_start"/>
+                <field name="billing_period_end"/>
+                <field name="amount_total_signed" string="Total Amount" widget="monetary"/>
+                <field name="amount_residual_signed" string="Amount Due" widget="monetary"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="payment_state" widget="badge"
+                       decoration-success="payment_state == 'paid'"
+                       decoration-warning="payment_state in ('partial', 'in_payment')"
+                       decoration-danger="payment_state == 'not_paid'"/>
+                <field name="is_overdue" widget="badge" decoration-danger="is_overdue == True" string="Overdue?"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'draft'"
+                       decoration-success="state == 'posted'"
+                       decoration-danger="state == 'cancel'"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Invoice Search View -->
+    <record id="view_brightloop_invoice_search" model="ir.ui.view">
+        <field name="name">brightloop.invoice.search</field>
+        <field name="model">account.move</field>
+        <field name="arch" type="xml">
+            <search string="Search Invoices">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="subscription_id"/>
+                <filter string="Subscription Invoices" name="filter_sub_inv" domain="[('is_subscription_invoice', '=', True)]"/>
+                <filter string="Unpaid / Due" name="filter_unpaid" domain="[('payment_state', 'in', ['not_paid', 'partial'])]"/>
+                <filter string="Overdue" name="filter_overdue" domain="[('is_overdue', '=', True)]"/>
+                <filter string="Paid" name="filter_paid" domain="[('payment_state', '=', 'paid')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Customer" name="group_customer" context="{'group_by': 'partner_id'}"/>
+                    <filter string="Status" name="group_status" context="{'group_by': 'state'}"/>
+                    <filter string="Payment Status" name="group_payment" context="{'group_by': 'payment_state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action for Invoices -->
+    <record id="action_brightloop_invoices" model="ir.actions.act_window">
+        <field name="name">Invoices</field>
+        <field name="res_model">account.move</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_brightloop_invoice_tree"/>
+        <field name="search_view_id" ref="view_brightloop_invoice_search"/>
+        <field name="domain">[('move_type', '=', 'out_invoice')]</field>
+        <field name="context">{'default_move_type': 'out_invoice'}</field>
+    </record>
+</odoo>

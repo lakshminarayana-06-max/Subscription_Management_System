@@ -1,0 +1,307 @@
+{% extends "base.html" %}
+
+{% block page_title %}Executive Financial Dashboard{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+        <h4 class="fw-bold mb-1">Financial &amp; Subscription Performance</h4>
+        <p class="text-muted mb-0 small">Real-time metrics, normalized MRR, collected revenue and churn tracking.</p>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+        <!-- Time Filter Buttons -->
+        <div class="btn-group shadow-sm" role="group">
+            <a href="/?time_filter=today" class="btn btn-sm {% if time_filter == 'today' %}btn-primary{% else %}btn-outline-secondary{% endif %}">Today</a>
+            <a href="/?time_filter=this_week" class="btn btn-sm {% if time_filter == 'this_week' %}btn-primary{% else %}btn-outline-secondary{% endif %}">This Week</a>
+            <a href="/?time_filter=this_month" class="btn btn-sm {% if time_filter == 'this_month' %}btn-primary{% else %}btn-outline-secondary{% endif %}">This Month</a>
+            <a href="/?time_filter=this_quarter" class="btn btn-sm {% if time_filter == 'this_quarter' %}btn-primary{% else %}btn-outline-secondary{% endif %}">This Quarter</a>
+            <a href="/?time_filter=this_year" class="btn btn-sm {% if time_filter == 'this_year' %}btn-primary{% else %}btn-outline-secondary{% endif %}">This Year</a>
+            <a href="/?time_filter=all" class="btn btn-sm {% if time_filter == 'all' %}btn-primary{% else %}btn-outline-secondary{% endif %}">All Time</a>
+        </div>
+        <!-- Run Billing Cron Button -->
+        <button class="btn btn-sm btn-success d-flex align-items-center gap-2 shadow-sm" onclick="runBillingCron()">
+            <i class="fa-solid fa-play"></i> <span>Run Billing Cron</span>
+        </button>
+    </div>
+</div>
+
+<!-- 10 Financial KPI Cards -->
+<div class="row g-3 mb-4">
+    <!-- 1. Total Customers -->
+    <div class="col-xl-2 col-md-4 col-sm-6">
+        <div class="card card-custom p-3">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="text-muted small fw-semibold">1. Customers</span>
+                <div class="bg-primary-subtle text-primary p-2 rounded"><i class="fa-solid fa-users"></i></div>
+            </div>
+            <h3 class="fw-bold mb-0">{{ kpi.total_customers }}</h3>
+            <span class="text-muted small">Registered entities</span>
+        </div>
+    </div>
+
+    <!-- 2. Total Subscriptions -->
+    <div class="col-xl-2 col-md-4 col-sm-6">
+        <div class="card card-custom p-3">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="text-muted small fw-semibold">2. Total Subs</span>
+                <div class="bg-info-subtle text-info p-2 rounded"><i class="fa-solid fa-layer-group"></i></div>
+            </div>
+            <h3 class="fw-bold mb-0">{{ kpi.total_subscriptions }}</h3>
+            <span class="text-muted small">All-time contracts</span>
+        </div>
+    </div>
+
+    <!-- 3. Active Subscriptions -->
+    <div class="col-xl-2 col-md-4 col-sm-6">
+        <div class="card card-custom p-3" style="border-left: 4px solid #10b981;">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="text-muted small fw-semibold">3. Active Subs</span>
+                <div class="bg-success-subtle text-success p-2 rounded"><i class="fa-solid fa-circle-check"></i></div>
+            </div>
+            <h3 class="fw-bold mb-0 text-success">{{ kpi.active_subscriptions }}</h3>
+            <span class="text-muted small">Generating revenue</span>
+        </div>
+    </div>
+
+    <!-- 4. Paused Subscriptions -->
+    <div class="col-xl-2 col-md-4 col-sm-6">
+        <div class="card card-custom p-3" style="border-left: 4px solid #f59e0b;">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="text-muted small fw-semibold">4. Paused</span>
+                <div class="bg-warning-subtle text-warning p-2 rounded"><i class="fa-solid fa-pause"></i></div>
+            </div>
+            <h3 class="fw-bold mb-0 text-warning">{{ kpi.paused_subscriptions }}</h3>
+            <span class="text-muted small">Temporarily frozen</span>
+        </div>
+    </div>
+
+    <!-- 5. Closed Subscriptions -->
+    <div class="col-xl-2 col-md-4 col-sm-6">
+        <div class="card card-custom p-3" style="border-left: 4px solid #64748b;">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="text-muted small fw-semibold">5. Closed</span>
+                <div class="bg-secondary-subtle text-secondary p-2 rounded"><i class="fa-solid fa-lock"></i></div>
+            </div>
+            <h3 class="fw-bold mb-0">{{ kpi.closed_subscriptions }}</h3>
+            <span class="text-muted small">Term completed</span>
+        </div>
+    </div>
+
+    <!-- 10. Monthly Recurring Revenue (MRR) -->
+    <div class="col-xl-2 col-md-4 col-sm-6">
+        <div class="card card-custom p-3" style="border-left: 4px solid #6366f1; background: linear-gradient(145deg, #ffffff, #f5f3ff);">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="text-indigo small fw-bold">10. Normalized MRR</span>
+                <div class="bg-indigo-subtle text-indigo p-2 rounded"><i class="fa-solid fa-calculator"></i></div>
+            </div>
+            <h3 class="fw-bold mb-0 text-primary">₹{{ "{:,.2f}".format(kpi.mrr) }}</h3>
+            <span class="text-muted small">Normalized Monthly</span>
+        </div>
+    </div>
+</div>
+
+<!-- Financial Revenue Cards (6, 7, 8, 9) -->
+<div class="row g-3 mb-4">
+    <!-- 6. Total Revenue Collected -->
+    <div class="col-lg-3 col-md-6">
+        <div class="card card-custom p-4 bg-white" style="border-left: 5px solid #10b981;">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <span class="text-muted small text-uppercase fw-bold">6. Revenue Collected</span>
+                    <h3 class="fw-bold mt-2 mb-1 text-success">₹{{ "{:,.2f}".format(kpi.revenue_collected) }}</h3>
+                    <span class="small text-muted"><i class="fa-solid fa-check-double text-success me-1"></i>Actual recorded bank &amp; UPI payments</span>
+                </div>
+                <div class="bg-success text-white p-3 rounded-circle fs-4">
+                    <i class="fa-solid fa-indian-rupee-sign"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Invoiced Total -->
+    <div class="col-lg-3 col-md-6">
+        <div class="card card-custom p-4 bg-white" style="border-left: 5px solid #3b82f6;">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <span class="text-muted small text-uppercase fw-bold">Period Invoiced</span>
+                    <h3 class="fw-bold mt-2 mb-1 text-primary">₹{{ "{:,.2f}".format(kpi.total_invoiced) }}</h3>
+                    <span class="small text-muted"><i class="fa-solid fa-file-invoice text-primary me-1"></i>Total billed for selected range</span>
+                </div>
+                <div class="bg-primary text-white p-3 rounded-circle fs-4">
+                    <i class="fa-solid fa-file-lines"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 7. Outstanding Payments -->
+    <div class="col-lg-3 col-md-6">
+        <div class="card card-custom p-4 bg-white" style="border-left: 5px solid #f59e0b;">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <span class="text-muted small text-uppercase fw-bold">7. Outstanding Dues</span>
+                    <h3 class="fw-bold mt-2 mb-1 text-warning">₹{{ "{:,.2f}".format(kpi.outstanding_payments) }}</h3>
+                    <span class="small text-muted"><i class="fa-solid fa-clock text-warning me-1"></i>Unpaid posted invoice balances</span>
+                </div>
+                <div class="bg-warning text-white p-3 rounded-circle fs-4">
+                    <i class="fa-solid fa-hourglass-half"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 8. Overdue Invoices & 9. Upcoming Renewals -->
+    <div class="col-lg-3 col-md-6">
+        <div class="card card-custom p-4 bg-white" style="border-left: 5px solid #ef4444;">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <span class="text-muted small text-uppercase fw-bold">8. Overdue / 9. Renewals</span>
+                    <h4 class="fw-bold mt-2 mb-1 text-danger">
+                        {{ kpi.overdue_invoices }} Overdue <span class="text-muted fw-normal fs-6">|</span> <span class="text-primary">{{ kpi.upcoming_renewals }} Renewals</span>
+                    </h4>
+                    <span class="small text-muted">Past due invoices needing chase</span>
+                </div>
+                <div class="bg-danger text-white p-3 rounded-circle fs-4">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Interactive Chart.js Graphs -->
+<div class="row g-4 mb-4">
+    <!-- Chart 1: Revenue Trend -->
+    <div class="col-lg-8">
+        <div class="card card-custom p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="fw-bold mb-0">Monthly Revenue Trend (Collected vs Invoiced)</h6>
+                <span class="badge bg-light text-muted">Last 6 Months</span>
+            </div>
+            <div style="height: 300px;">
+                <canvas id="revenueTrendChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart 2: Payment Status Distribution -->
+    <div class="col-lg-4">
+        <div class="card card-custom p-4">
+            <h6 class="fw-bold mb-3">Invoice Payment Distribution</h6>
+            <div style="height: 300px;" class="d-flex align-items-center justify-content-center">
+                <canvas id="paymentDistChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Chart 3: Revenue by Plan -->
+    <div class="col-lg-12">
+        <div class="card card-custom p-4">
+            <h6 class="fw-bold mb-3">Active Subscription Value by Plan</h6>
+            <div style="height: 250px;">
+                <canvas id="planRevenueChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // 1. Revenue Trend Chart
+    const trendCtx = document.getElementById('revenueTrendChart').getContext('2d');
+    new Chart(trendCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ charts.monthly_labels | tojson }},
+            datasets: [
+                {
+                    label: 'Invoiced Revenue (₹)',
+                    data: {{ charts.monthly_invoiced | tojson }},
+                    backgroundColor: 'rgba(79, 70, 229, 0.7)',
+                    borderColor: '#4f46e5',
+                    borderWidth: 1,
+                    borderRadius: 6
+                },
+                {
+                    label: 'Collected Cash (₹)',
+                    data: {{ charts.monthly_collected | tojson }},
+                    backgroundColor: 'rgba(16, 185, 129, 0.7)',
+                    borderColor: '#10b981',
+                    borderWidth: 1,
+                    borderRadius: 6
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { callback: value => '₹' + value.toLocaleString('en-IN') }
+                }
+            }
+        }
+    });
+
+    // 2. Payment Distribution Chart
+    const payCtx = document.getElementById('paymentDistChart').getContext('2d');
+    new Chart(payCtx, {
+        type: 'doughnut',
+        data: {
+            labels: {{ charts.pay_labels | tojson }},
+            datasets: [{
+                data: {{ charts.pay_values | tojson }},
+                backgroundColor: ['#10b981', '#f59e0b', '#ef4444', '#64748b']
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { position: 'bottom' } }
+        }
+    });
+
+    // 3. Plan Revenue Chart
+    const planCtx = document.getElementById('planRevenueChart').getContext('2d');
+    new Chart(planCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ charts.plan_labels | tojson }},
+            datasets: [{
+                label: 'Active Value (₹)',
+                data: {{ charts.plan_values | tojson }},
+                backgroundColor: ['#6366f1', '#38bdf8', '#10b981', '#f59e0b', '#ec4899'],
+                borderRadius: 6
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    ticks: { callback: value => '₹' + value.toLocaleString('en-IN') }
+                }
+            }
+        }
+    });
+
+    // Trigger Automated Billing Cron
+    async function runBillingCron() {
+        if (!confirm('Run the Automated Background Recurring Billing Cron now? This will scan all active subscriptions due for billing, generate invoices and advance billing schedules.')) return;
+        try {
+            const resp = await fetch('/invoices/run-cron', { method: 'POST' });
+            const data = await resp.json();
+            showAlert(data.message, 'success');
+            setTimeout(() => { location.reload(); }, 2000);
+        } catch (e) {
+            showAlert('Error running cron: ' + e, 'danger');
+        }
+    }
+</script>
+{% endblock %}

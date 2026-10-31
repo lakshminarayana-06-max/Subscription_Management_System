@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Subscription Tree View -->
+    <record id="view_brightloop_subscription_tree" model="ir.ui.view">
+        <field name="name">brightloop.subscription.tree</field>
+        <field name="model">brightloop.subscription</field>
+        <field name="arch" type="xml">
+            <tree string="Subscriptions" sample="1" decoration-success="state == 'active'" decoration-info="state == 'quotation'" decoration-warning="state == 'paused'" decoration-danger="state in ('cancelled', 'expired')" decoration-muted="state == 'closed'">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="plan_id"/>
+                <field name="billing_frequency" widget="badge"/>
+                <field name="start_date"/>
+                <field name="expiry_date"/>
+                <field name="next_billing_date"/>
+                <field name="amount_total" widget="monetary"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="invoice_count" string="Invoices"/>
+                <field name="state" widget="badge" 
+                       decoration-success="state == 'active'" 
+                       decoration-warning="state == 'paused'" 
+                       decoration-danger="state in ('cancelled', 'expired')" 
+                       decoration-info="state in ('draft', 'quotation', 'confirmed')"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Subscription Form View -->
+    <record id="view_brightloop_subscription_form" model="ir.ui.view">
+        <field name="name">brightloop.subscription.form</field>
+        <field name="model">brightloop.subscription</field>
+        <field name="arch" type="xml">
+            <form string="Subscription">
+                <header>
+                    <button name="action_confirm" string="Confirm" type="object" class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_activate" string="Activate" type="object" class="btn-success" invisible="state not in ('draft', 'quotation', 'confirmed')"/>
+                    <button name="action_generate_invoice" string="Generate Recurring Invoice" type="object" class="btn-primary" invisible="state != 'active'"/>
+                    <button name="action_pause" string="Pause Subscription" type="object" class="btn-warning" invisible="state != 'active'"/>
+                    <button name="action_resume" string="Resume Subscription" type="object" class="btn-success" invisible="state != 'paused'"/>
+                    <button name="action_renew" string="Renew" type="object" class="btn-secondary" invisible="state not in ('active', 'expired')"/>
+                    <button name="action_cancel" string="Cancel" type="object" class="btn-danger" invisible="state in ('closed', 'cancelled')"/>
+                    <button name="action_close" string="Close" type="object" class="btn-secondary" invisible="state not in ('active', 'paused', 'expired')"/>
+                    
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,active,closed"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_invoices" type="object" class="oe_stat_button" icon="fa-pencil-square-o">
+                            <field name="invoice_count" widget="statinfo" string="Invoices"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <span class="o_form_label">Subscription Reference</span>
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group name="sub_details" string="Customer &amp; Plan">
+                            <field name="partner_id" widget="res_partner_many2one" context="{'res_partner_search_mode': 'customer'}"/>
+                            <field name="plan_id"/>
+                            <field name="billing_frequency"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group name="sub_dates" string="Billing &amp; Schedule">
+                            <field name="start_date"/>
+                            <field name="expiry_date"/>
+                            <field name="next_billing_date"/>
+                            <field name="payment_terms_id"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Subscription Lines">
+                            <field name="line_ids">
+                                <tree editable="bottom">
+                                    <field name="product_id"/>
+                                    <field name="name"/>
+                                    <field name="quantity"/>
+                                    <field name="unit_price" widget="monetary"/>
+                                    <field name="tax_ids" widget="many2many_tags"/>
+                                    <field name="discount_amount" widget="monetary"/>
+                                    <field name="price_subtotal" widget="monetary"/>
+                                    <field name="price_total" widget="monetary"/>
+                                    <field name="currency_id" invisible="1"/>
+                                </tree>
+                            </field>
+                            <group col="6" class="mt-2 mt-md-0">
+                                <group colspan="4"/>
+                                <group class="oe_subtotal_footer oe_right" colspan="2" name="sub_total">
+                                    <field name="amount_untaxed" widget="monetary"/>
+                                    <field name="amount_tax" widget="monetary"/>
+                                    <field name="amount_discount" widget="monetary" invisible="amount_discount == 0"/>
+                                    <div class="oe_subtotal_footer_separator oe_inline o_td_label">
+                                        <label for="amount_total"/>
+                                    </div>
+                                    <field name="amount_total" nolabel="1" class="oe_subtotal_footer_separator" widget="monetary"/>
+                                </group>
+                                <div class="clearfix"/>
+                            </group>
+                        </page>
+                        <page string="Status History &amp; Audit Trail">
+                            <field name="history_ids" readonly="1">
+                                <tree>
+                                    <field name="date"/>
+                                    <field name="user_id"/>
+                                    <field name="previous_state" widget="badge"/>
+                                    <field name="new_state" widget="badge"/>
+                                    <field name="note"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Additional Information">
+                            <group>
+                                <field name="quotation_id" readonly="1"/>
+                                <field name="pause_reason" invisible="not pause_reason"/>
+                                <field name="close_reason" invisible="not close_reason"/>
+                                <field name="active" widget="boolean_toggle"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Subscription Search View -->
+    <record id="view_brightloop_subscription_search" model="ir.ui.view">
+        <field name="name">brightloop.subscription.search</field>
+        <field name="model">brightloop.subscription</field>
+        <field name="arch" type="xml">
+            <search string="Search Subscriptions">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="plan_id"/>
+                <filter string="Active" name="filter_active" domain="[('state', '=', 'active')]"/>
+                <filter string="Paused" name="filter_paused" domain="[('state', '=', 'paused')]"/>
+                <filter string="Expired" name="filter_expired" domain="[('state', '=', 'expired')]"/>
+                <filter string="Closed" name="filter_closed" domain="[('state', '=', 'closed')]"/>
+                <separator/>
+                <filter string="Due for Billing" name="filter_due_billing" domain="[('state', '=', 'active'), ('next_billing_date', '&lt;=', context_today())]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Customer" name="group_partner" context="{'group_by': 'partner_id'}"/>
+                    <filter string="Plan" name="group_plan" context="{'group_by': 'plan_id'}"/>
+                    <filter string="Status" name="group_status" context="{'group_by': 'state'}"/>
+                    <filter string="Billing Frequency" name="group_frequency" context="{'group_by': 'billing_frequency'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Subscription Action -->
+    <record id="action_brightloop_subscriptions" model="ir.actions.act_window">
+        <field name="name">Subscriptions</field>
+        <field name="res_model">brightloop.subscription</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_brightloop_subscription_search"/>
+        <field name="context">{'search_default_filter_active': 1}</field>
+    </record>
+</odoo>

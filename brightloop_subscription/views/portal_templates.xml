@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Portal Breadcrumbs Extension -->
+    <template id="portal_my_home_menu_subscription" name="Portal layout : subscription menu entries" inherit_id="portal.portal_breadcrumbs" priority="30">
+        <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+            <li t-if="page_name == 'subscriptions' or subscription" class="breadcrumb-item active">
+                <a t-if="subscription" t-attf-href="/my/subscriptions">Subscriptions</a>
+                <t t-else="">Subscriptions</t>
+            </li>
+            <li t-if="subscription" class="breadcrumb-item active">
+                <t t-out="subscription.name"/>
+            </li>
+        </xpath>
+    </template>
+
+    <!-- Portal Home Entry -->
+    <template id="portal_my_home_subscription" name="Show Subscriptions" customize_show="True" inherit_id="portal.portal_my_home" priority="30">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="title">Subscriptions</t>
+                <t t-set="url" t-value="'/my/subscriptions'"/>
+                <t t-set="placeholder_count" t-value="'subscription_count'"/>
+            </t>
+        </xpath>
+    </template>
+
+    <!-- Customer Subscriptions List View -->
+    <template id="portal_my_subscriptions" name="My Subscriptions">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+            <t t-call="portal.portal_table">
+                <thead>
+                    <tr class="active">
+                        <th>Subscription #</th>
+                        <th>Plan</th>
+                        <th>Billing Frequency</th>
+                        <th>Start Date</th>
+                        <th>Next Billing</th>
+                        <th>Expiry Date</th>
+                        <th>Total Amount</th>
+                        <th class="text-center">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <t t-foreach="subscriptions" t-as="sub">
+                        <tr>
+                            <td>
+                                <a t-attf-href="/my/subscriptions/#{sub.id}">
+                                    <t t-out="sub.name"/>
+                                </a>
+                            </td>
+                            <td><t t-out="sub.plan_id.name"/></td>
+                            <td><span class="badge bg-light text-dark"><t t-out="sub.billing_frequency.capitalize()"/></span></td>
+                            <td><span t-field="sub.start_date"/></td>
+                            <td><span t-field="sub.next_billing_date"/></td>
+                            <td><span t-field="sub.expiry_date"/></td>
+                            <td><span t-field="sub.amount_total" t-options="{'widget': 'monetary', 'display_currency': sub.currency_id}"/></td>
+                            <td class="text-center">
+                                <span t-if="sub.state == 'active'" class="badge bg-success">Active</span>
+                                <span t-elif="sub.state == 'paused'" class="badge bg-warning">Paused</span>
+                                <span t-elif="sub.state == 'closed'" class="badge bg-secondary">Closed</span>
+                                <span t-elif="sub.state == 'expired'" class="badge bg-danger">Expired</span>
+                                <span t-else="" class="badge bg-info"><t t-out="sub.state.capitalize()"/></span>
+                            </td>
+                        </tr>
+                    </t>
+                </tbody>
+            </t>
+        </t>
+    </template>
+
+    <!-- Customer Subscription Detail View -->
+    <template id="portal_subscription_page" name="My Subscription Detail">
+        <t t-call="portal.portal_layout">
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Subscription <t t-out="subscription.name"/></h5>
+                    <span class="badge bg-light text-dark fs-6"><t t-out="subscription.state.capitalize()"/></span>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <p><strong>Plan:</strong> <t t-out="subscription.plan_id.name"/></p>
+                            <p><strong>Billing Frequency:</strong> <t t-out="subscription.billing_frequency.capitalize()"/></p>
+                            <p><strong>Start Date:</strong> <span t-field="subscription.start_date"/></p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Next Billing Date:</strong> <span t-field="subscription.next_billing_date"/></p>
+                            <p><strong>Expiry Date:</strong> <span t-field="subscription.expiry_date"/></p>
+                            <p><strong>Total Recurring Amount:</strong> <span t-field="subscription.amount_total" t-options="{'widget': 'monetary', 'display_currency': subscription.currency_id}"/></p>
+                        </div>
+                    </div>
+
+                    <!-- Customer Self-Service Actions -->
+                    <div class="p-3 bg-light rounded d-flex gap-2">
+                        <form t-if="subscription.plan_id.pause_allowed and subscription.state == 'active'" t-attf-action="/my/subscriptions/#{subscription.id}/action" method="post" class="d-inline">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                            <input type="hidden" name="action" value="pause"/>
+                            <button type="submit" class="btn btn-warning btn-sm">Request Pause</button>
+                        </form>
+                        <form t-if="subscription.state == 'paused'" t-attf-action="/my/subscriptions/#{subscription.id}/action" method="post" class="d-inline">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                            <input type="hidden" name="action" value="resume"/>
+                            <button type="submit" class="btn btn-success btn-sm">Resume Subscription</button>
+                        </form>
+                        <form t-if="subscription.plan_id.renewal_allowed and subscription.state in ('active', 'expired')" t-attf-action="/my/subscriptions/#{subscription.id}/action" method="post" class="d-inline">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                            <input type="hidden" name="action" value="renew"/>
+                            <button type="submit" class="btn btn-primary btn-sm">Request Renewal</button>
+                        </form>
+                        <form t-if="subscription.plan_id.early_closure_allowed and subscription.state in ('active', 'paused')" t-attf-action="/my/subscriptions/#{subscription.id}/action" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to cancel this subscription?');">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                            <input type="hidden" name="action" value="cancel"/>
+                            <button type="submit" class="btn btn-outline-danger btn-sm">Request Cancellation</button>
+                        </form>
+                    </div>
+
+                    <!-- Products Table -->
+                    <h6 class="mt-4 mb-3 border-bottom pb-2">Included Products &amp; Services</h6>
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th class="text-end">Quantity</th>
+                                <th class="text-end">Unit Price</th>
+                                <th class="text-end">Discount</th>
+                                <th class="text-end">Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="subscription.line_ids" t-as="line">
+                                <tr>
+                                    <td><t t-out="line.name"/></td>
+                                    <td class="text-end"><t t-out="line.quantity"/></td>
+                                    <td class="text-end"><span t-field="line.unit_price" t-options="{'widget': 'monetary', 'display_currency': subscription.currency_id}"/></td>
+                                    <td class="text-end"><span t-field="line.discount_amount" t-options="{'widget': 'monetary', 'display_currency': subscription.currency_id}"/></td>
+                                    <td class="text-end"><strong><span t-field="line.price_subtotal" t-options="{'widget': 'monetary', 'display_currency': subscription.currency_id}"/></strong></td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+
+                    <!-- Associated Invoices -->
+                    <h6 class="mt-4 mb-3 border-bottom pb-2">Invoices &amp; Billing History</h6>
+                    <table class="table table-sm table-striped">
+                        <thead>
+                            <tr>
+                                <th>Invoice #</th>
+                                <th>Billing Period</th>
+                                <th>Due Date</th>
+                                <th class="text-end">Amount</th>
+                                <th class="text-center">Status</th>
+                                <th class="text-end">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="subscription.invoice_ids" t-as="inv">
+                                <tr>
+                                    <td><t t-out="inv.name"/></td>
+                                    <td><span t-field="inv.billing_period_start"/> to <span t-field="inv.billing_period_end"/></td>
+                                    <td><span t-field="inv.invoice_date_due"/></td>
+                                    <td class="text-end"><span t-field="inv.amount_total" t-options="{'widget': 'monetary', 'display_currency': inv.currency_id}"/></td>
+                                    <td class="text-center">
+                                        <span t-if="inv.payment_state == 'paid'" class="badge bg-success">Paid</span>
+                                        <span t-elif="inv.payment_state == 'partial'" class="badge bg-warning">Partial</span>
+                                        <span t-else="" class="badge bg-danger">Unpaid</span>
+                                    </td>
+                                    <td class="text-end">
+                                        <a t-attf-href="/my/invoices/#{inv.id}?report_type=pdf&amp;download=true" class="btn btn-sm btn-outline-secondary">Download PDF</a>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

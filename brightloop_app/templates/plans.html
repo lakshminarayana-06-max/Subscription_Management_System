@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block page_title %}Subscription Plan Management{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+        <h4 class="fw-bold mb-1">Subscription Plans</h4>
+        <p class="text-muted mb-0 small">Configured billing cycles, availability periods and lifecycle policies.</p>
+    </div>
+    <div>
+        {% if user.role == 'admin' %}
+        <button class="btn btn-sm btn-bl-primary d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#newPlanModal">
+            <i class="fa-solid fa-plus"></i> <span>New Plan</span>
+        </button>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row g-4">
+    {% for p in plans %}
+    <div class="col-lg-4 col-md-6">
+        <div class="card card-custom h-100 p-4 border-top border-4 {% if p.billing_frequency == 'daily' %}border-info{% elif p.billing_frequency == 'weekly' %}border-primary{% elif p.billing_frequency == 'monthly' %}border-success{% else %}border-warning{% endif %}">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <div>
+                    <h5 class="fw-bold mb-1">{{ p.name }}</h5>
+                    <span class="text-muted small">Code: {{ p.code or ('#PLAN-' ~ p.id) }}</span>
+                </div>
+                <span class="badge {% if p.billing_frequency == 'daily' %}bg-info{% elif p.billing_frequency == 'weekly' %}bg-primary{% elif p.billing_frequency == 'monthly' %}bg-success{% else %}bg-warning text-dark{% endif %} text-uppercase">
+                    {{ p.billing_frequency }}
+                </span>
+            </div>
+
+            <div class="my-3">
+                <span class="fs-3 fw-bold text-dark">₹{{ "{:,.2f}".format(p.price) }}</span>
+                <span class="text-muted">/ {{ p.billing_frequency }}</span>
+            </div>
+
+            <p class="text-muted small mb-3">{{ p.description or 'Enterprise recurring contract.' }}</p>
+
+            <div class="bg-light p-3 rounded small mb-3">
+                <div class="d-flex justify-content-between mb-1">
+                    <span class="text-muted">Base Product:</span>
+                    <strong>{{ p.product_name }}</strong>
+                </div>
+                <div class="d-flex justify-content-between mb-1">
+                    <span class="text-muted">Min Quantity:</span>
+                    <strong>{{ p.min_quantity }} units</strong>
+                </div>
+                <div class="d-flex justify-content-between mb-1">
+                    <span class="text-muted">Active Subscriptions:</span>
+                    <span class="badge bg-primary">{{ p.sub_count }} active</span>
+                </div>
+            </div>
+
+            <div class="small border-top pt-3">
+                <div class="fw-semibold text-muted mb-2">Policy Settings:</div>
+                <div class="d-flex flex-wrap gap-2">
+                    <span class="badge {% if p.auto_close %}bg-success-subtle text-success{% else %}bg-secondary-subtle text-secondary{% endif %}">
+                        <i class="fa-solid fa-{% if p.auto_close %}check{% else %}xmark{% endif %} me-1"></i> Auto Close
+                    </span>
+                    <span class="badge {% if p.pause_allowed %}bg-success-subtle text-success{% else %}bg-secondary-subtle text-secondary{% endif %}">
+                        <i class="fa-solid fa-{% if p.pause_allowed %}check{% else %}xmark{% endif %} me-1"></i> Pause Allowed
+                    </span>
+                    <span class="badge {% if p.early_closure_allowed %}bg-success-subtle text-success{% else %}bg-secondary-subtle text-secondary{% endif %}">
+                        <i class="fa-solid fa-{% if p.early_closure_allowed %}check{% else %}xmark{% endif %} me-1"></i> Early Closure
+                    </span>
+                    <span class="badge {% if p.renewal_allowed %}bg-success-subtle text-success{% else %}bg-secondary-subtle text-secondary{% endif %}">
+                        <i class="fa-solid fa-{% if p.renewal_allowed %}check{% else %}xmark{% endif %} me-1"></i> Renewal
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Modal: New Plan (Admin Only) -->
+{% if user.role == 'admin' %}
+<div class="modal fade" id="newPlanModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="/plans/create" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">Configure Subscription Plan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Plan Name *</label>
+                        <input type="text" name="name" class="form-control" required placeholder="e.g. Enterprise Cloud Pro">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Related Base Product *</label>
+                        <select name="product_id" class="form-select" required>
+                            {% for pr in products %}
+                            <option value="{{ pr.id }}">{{ pr.name }} (₹{{ pr.list_price }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="row g-2 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Billing Frequency *</label>
+                            <select name="frequency" class="form-select" required>
+                                <option value="daily">Daily</option>
+                                <option value="weekly">Weekly</option>
+                                <option value="monthly" selected>Monthly</option>
+                                <option value="yearly">Yearly</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Price (₹) *</label>
+                            <input type="number" step="0.01" name="price" class="form-control" required placeholder="2400.00">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Minimum Quantity</label>
+                        <input type="number" name="min_qty" class="form-control" value="1" min="1">
+                    </div>
+                    <div class="mb-3">
+                        <div class="fw-bold small mb-2">Lifecycle Policies</div>
+                        <div class="form-check form-switch mb-1">
+                            <input class="form-check-input" type="checkbox" name="auto_close" value="true" id="acSwitch" checked>
+                            <label class="form-check-label small" for="acSwitch">Auto Close on Expiry Date</label>
+                        </div>
+                        <div class="form-check form-switch mb-1">
+                            <input class="form-check-input" type="checkbox" name="pause_allowed" value="true" id="pauseSwitch" checked>
+                            <label class="form-check-label small" for="pauseSwitch">Allow Pause &amp; Resume</label>
+                        </div>
+                        <div class="form-check form-switch mb-1">
+                            <input class="form-check-input" type="checkbox" name="early_closure" value="true" id="earlySwitch" checked>
+                            <label class="form-check-label small" for="earlySwitch">Allow Early Cancellation</label>
+                        </div>
+                        <div class="form-check form-switch mb-1">
+                            <input class="form-check-input" type="checkbox" name="renewal_allowed" value="true" id="renewSwitch" checked>
+                            <label class="form-check-label small" for="renewSwitch">Allow Term Renewal</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary btn-sm">Save Plan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

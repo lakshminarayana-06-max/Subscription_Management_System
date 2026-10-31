@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Branded Invoice PDF Report Action -->
+    <record id="action_report_brightloop_invoice" model="ir.actions.report">
+        <field name="name">Brightloop Tax Invoice</field>
+        <field name="model">account.move</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">brightloop_subscription.report_invoice_template</field>
+        <field name="report_file">brightloop_subscription.report_invoice_template</field>
+        <field name="binding_model_id" ref="account.model_account_move"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- Invoice QWeb Template -->
+    <template id="report_invoice_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <div class="row mb-3">
+                            <div class="col-8">
+                                <h2 class="text-primary font-weight-bold">Brightloop Software Private Limited</h2>
+                                <p class="text-muted">GSTIN: 33AAACB9876K1Z1 | Cloud Solutions &amp; Subscription Software</p>
+                                <h4>TAX INVOICE: <span t-field="o.name"/></h4>
+                            </div>
+                            <div class="col-4 text-end">
+                                <span t-if="o.payment_state == 'paid'" class="badge bg-success fs-5 p-2">PAID</span>
+                                <span t-elif="o.payment_state == 'partial'" class="badge bg-warning fs-5 p-2">PARTIALLY PAID</span>
+                                <span t-else="" class="badge bg-danger fs-5 p-2">DUE</span>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3 mb-4">
+                            <div class="col-6">
+                                <strong>Billed To:</strong>
+                                <div><strong t-field="o.partner_id.name"/></div>
+                                <div><span t-field="o.partner_id.street"/></div>
+                                <div><span t-field="o.partner_id.city"/>, <span t-field="o.partner_id.zip"/></div>
+                                <div>GSTIN: <span t-field="o.partner_id.vat"/></div>
+                            </div>
+                            <div class="col-6">
+                                <div><strong>Invoice Date:</strong> <span t-field="o.invoice_date"/></div>
+                                <div><strong>Due Date:</strong> <span t-field="o.invoice_date_due"/></div>
+                                <div t-if="o.subscription_id"><strong>Subscription Ref:</strong> <span t-field="o.subscription_id.name"/></div>
+                                <div t-if="o.billing_period_start">
+                                    <strong>Billing Period:</strong> <span t-field="o.billing_period_start"/> to <span t-field="o.billing_period_end"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <table class="table table-sm table-striped mt-3">
+                            <thead>
+                                <tr>
+                                    <th>Description</th>
+                                    <th class="text-end">Qty</th>
+                                    <th class="text-end">Unit Price</th>
+                                    <th class="text-end">Discount</th>
+                                    <th class="text-end">Taxes</th>
+                                    <th class="text-end">Amount (₹)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="o.invoice_line_ids" t-as="l">
+                                    <tr>
+                                        <td><span t-field="l.name"/></td>
+                                        <td class="text-end"><span t-field="l.quantity"/></td>
+                                        <td class="text-end"><span t-field="l.price_unit"/></td>
+                                        <td class="text-end"><span t-field="l.discount"/>%</td>
+                                        <td class="text-end"><span t-esc="', '.join(map(lambda x: (x.name), l.tax_ids))"/></td>
+                                        <td class="text-end"><span t-field="l.price_subtotal"/></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+
+                        <div class="row justify-content-end mt-4">
+                            <div class="col-4">
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td>Subtotal:</td>
+                                        <td class="text-end"><span t-field="o.amount_untaxed"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Tax:</td>
+                                        <td class="text-end"><span t-field="o.amount_tax"/></td>
+                                    </tr>
+                                    <tr class="border-top border-dark font-weight-bold">
+                                        <td>Total Amount:</td>
+                                        <td class="text-end"><span t-field="o.amount_total"/></td>
+                                    </tr>
+                                    <tr class="text-danger">
+                                        <td>Amount Due:</td>
+                                        <td class="text-end"><strong><span t-field="o.amount_residual"/></strong></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

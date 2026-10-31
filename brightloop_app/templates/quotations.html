@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block page_title %}Quotation Management{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+        <h4 class="fw-bold mb-1">Quotations &amp; Proposals</h4>
+        <p class="text-muted mb-0 small">Create offers, configure validity terms and convert accepted quotes into live subscriptions.</p>
+    </div>
+    <div>
+        <button class="btn btn-sm btn-bl-primary d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#newQuotationModal">
+            <i class="fa-solid fa-plus"></i> <span>New Quotation</span>
+        </button>
+    </div>
+</div>
+
+<div class="card card-custom p-0 overflow-hidden">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th class="ps-4">Quotation #</th>
+                    <th>Customer</th>
+                    <th>Plan</th>
+                    <th>Quotation Date</th>
+                    <th>Validity Date</th>
+                    <th class="text-end">Total Amount (₹)</th>
+                    <th class="text-center">Status</th>
+                    <th class="text-end pe-4">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for q in quotations %}
+                <tr>
+                    <td class="ps-4 fw-bold text-primary font-monospace">{{ q.name }}</td>
+                    <td class="fw-semibold text-dark">{{ q.customer_name }}</td>
+                    <td>{{ q.plan_name }}</td>
+                    <td>{{ q.quotation_date }}</td>
+                    <td>
+                        <span class="small {% if q.state == 'expired' %}text-danger fw-bold{% else %}text-muted{% endif %}">
+                            {{ q.validity_date }}
+                        </span>
+                    </td>
+                    <td class="text-end fw-bold">₹{{ "{:,.2f}".format(q.amount_total) }}</td>
+                    <td class="text-center">
+                        {% if q.state == 'confirmed' %}
+                        <span class="badge bg-success-subtle text-success">Confirmed</span>
+                        {% elif q.state == 'quotation' %}
+                        <span class="badge bg-primary-subtle text-primary">Sent</span>
+                        {% elif q.state == 'expired' %}
+                        <span class="badge bg-danger-subtle text-danger">Expired</span>
+                        {% elif q.state == 'cancelled' %}
+                        <span class="badge bg-secondary-subtle text-secondary">Cancelled</span>
+                        {% else %}
+                        <span class="badge bg-light text-dark border">Draft</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-end pe-4">
+                        {% if q.subscription_id %}
+                        <a href="/subscriptions/{{ q.subscription_id }}" class="btn btn-sm btn-outline-success">
+                            <i class="fa-solid fa-link me-1"></i> {{ q.sub_name or 'View Sub' }}
+                        </a>
+                        {% elif q.state in ('quotation', 'confirmed') %}
+                        <form action="/quotations/{{ q.id }}/convert" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-primary">
+                                <i class="fa-solid fa-arrow-right-arrow-left me-1"></i> Convert to Sub
+                            </button>
+                        </form>
+                        {% else %}
+                        <span class="text-muted small">No action</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="8" class="text-center py-5 text-muted">No quotations found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal: New Quotation -->
+<div class="modal fade" id="newQuotationModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="/quotations/create" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">Create Subscription Quotation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Customer *</label>
+                        <select name="partner_id" class="form-select" required>
+                            {% for c in customers %}
+                            <option value="{{ c.id }}">{{ c.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Target Subscription Plan *</label>
+                        <select name="plan_id" class="form-select" required>
+                            {% for pl in plans %}
+                            <option value="{{ pl.id }}">{{ pl.name }} (₹{{ pl.price }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Primary Product / Service *</label>
+                        <select name="product_id" class="form-select" required>
+                            {% for pr in products %}
+                            <option value="{{ pr.id }}">{{ pr.name }} (₹{{ pr.list_price }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="row g-2 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Quantity (Seats / Units)</label>
+                            <input type="number" name="quantity" class="form-control" value="1" min="1" step="1">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Validity (Days)</label>
+                            <input type="number" name="validity_days" class="form-control" value="30" min="1">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary btn-sm">Generate Quotation</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

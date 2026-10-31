@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Customer Tree View -->
+    <record id="view_brightloop_customer_tree" model="ir.ui.view">
+        <field name="name">brightloop.customer.tree</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <tree string="Customers" sample="1">
+                <field name="name" string="Customer Name"/>
+                <field name="email"/>
+                <field name="phone"/>
+                <field name="city"/>
+                <field name="subscription_count" string="Total Subs"/>
+                <field name="active_subscription_count" string="Active Subs"/>
+                <field name="total_invoiced_amount" string="Total Invoiced" widget="monetary"/>
+                <field name="total_paid_amount" string="Total Paid" widget="monetary"/>
+                <field name="total_outstanding_amount" string="Outstanding" widget="monetary"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Extend Customer Form View with Smart Buttons -->
+    <record id="view_brightloop_customer_form_inherit" model="ir.ui.view">
+        <field name="name">brightloop.customer.form.inherit</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <div name="button_box" position="inside">
+                <button name="action_view_customer_subscriptions" type="object" class="oe_stat_button" icon="fa-refresh">
+                    <field name="subscription_count" widget="statinfo" string="Subscriptions"/>
+                </button>
+            </div>
+        </field>
+    </record>
+
+    <!-- Action for Customers -->
+    <record id="action_brightloop_customers" model="ir.actions.act_window">
+        <field name="name">Customers</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="view_id" ref="view_brightloop_customer_tree"/>
+        <field name="domain">[('customer_rank', '>', 0)]</field>
+        <field name="context">{'default_customer_rank': 1}</field>
+    </record>
+</odoo>

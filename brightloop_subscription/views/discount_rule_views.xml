@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Discount Rule Tree View -->
+    <record id="view_brightloop_discount_rule_tree" model="ir.ui.view">
+        <field name="name">brightloop.discount.rule.tree</field>
+        <field name="model">brightloop.discount.rule</field>
+        <field name="arch" type="xml">
+            <tree string="Discount Rules" sample="1">
+                <field name="name"/>
+                <field name="discount_type" widget="badge"/>
+                <field name="value"/>
+                <field name="min_purchase_amount" widget="monetary"/>
+                <field name="min_quantity"/>
+                <field name="start_date"/>
+                <field name="end_date"/>
+                <field name="current_usage_count" string="Used"/>
+                <field name="max_usage_count" string="Max Limit"/>
+                <field name="active" widget="boolean_toggle"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Discount Rule Form View -->
+    <record id="view_brightloop_discount_rule_form" model="ir.ui.view">
+        <field name="name">brightloop.discount.rule.form</field>
+        <field name="model">brightloop.discount.rule</field>
+        <field name="arch" type="xml">
+            <form string="Discount Rule">
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <div class="oe_title">
+                        <label for="name" string="Rule Name"/>
+                        <h1><field name="name" placeholder="e.g. Festival 15% Off or Bulk Enterprise ₹2000 Off"/></h1>
+                    </div>
+                    <group>
+                        <group name="rule_type_group" string="Discount Values">
+                            <field name="discount_type"/>
+                            <field name="value"/>
+                            <field name="min_purchase_amount" widget="monetary"/>
+                            <field name="min_quantity"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                        <group name="rule_limits_group" string="Validity &amp; Limits">
+                            <field name="start_date"/>
+                            <field name="end_date"/>
+                            <field name="max_usage_count"/>
+                            <field name="current_usage_count"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Applicability Filters">
+                            <group>
+                                <field name="applicable_product_ids" widget="many2many_tags" placeholder="Apply to all products if empty"/>
+                                <field name="applicable_plan_ids" widget="many2many_tags" placeholder="Apply to all subscription plans if empty"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_brightloop_discounts" model="ir.actions.act_window">
+        <field name="name">Discount Rules</field>
+        <field name="res_model">brightloop.discount.rule</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>

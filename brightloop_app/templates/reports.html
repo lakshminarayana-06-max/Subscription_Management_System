@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block page_title %}Executive Financial &amp; Subscription Reports{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+        <h4 class="fw-bold mb-1">Financial &amp; Operations Reports</h4>
+        <p class="text-muted mb-0 small">Audit, churn, cash collections, and receivable aging reports with instant CSV export.</p>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+        <a href="/reports/export/{{ report_type }}" class="btn btn-sm btn-outline-success d-flex align-items-center gap-2">
+            <i class="fa-solid fa-file-csv"></i> <span>Export to CSV / Excel</span>
+        </a>
+    </div>
+</div>
+
+<!-- 10 Report Selector Pills -->
+<div class="card card-custom p-3 mb-4">
+    <div class="d-flex gap-2 flex-wrap">
+        <a href="/reports?report_type=subscription_summary" class="btn btn-sm {% if report_type == 'subscription_summary' %}btn-primary{% else %}btn-outline-secondary{% endif %}">
+            1. Subscription Summary
+        </a>
+        <a href="/reports?report_type=active_subscriptions" class="btn btn-sm {% if report_type == 'active_subscriptions' %}btn-primary{% else %}btn-outline-secondary{% endif %}">
+            2. Active &amp; MRR
+        </a>
+        <a href="/reports?report_type=expired_subscriptions" class="btn btn-sm {% if report_type == 'expired_subscriptions' %}btn-primary{% else %}btn-outline-secondary{% endif %}">
+            3. Expired / Churned
+        </a>
+        <a href="/reports?report_type=renewals" class="btn btn-sm {% if report_type == 'renewals' %}btn-primary{% else %}btn-outline-secondary{% endif %}">
+            4. Upcoming Renewals
+        </a>
+        <a href="/reports?report_type=monthly_revenue" class="btn btn-sm {% if report_type == 'monthly_revenue' %}btn-primary{% else %}btn-outline-secondary{% endif %}">
+            5. Monthly Revenue
+        </a>
+        <a href="/reports?report_type=payment_collections" class="btn btn-sm {% if report_type == 'payment_collections' %}btn-primary{% else %}btn-outline-secondary{% endif %}">
+            6. Payment Collections
+        </a>
+        <a href="/reports?report_type=outstanding_invoices" class="btn btn-sm {% if report_type == 'outstanding_invoices' %}btn-primary{% else %}btn-outline-secondary{% endif %}">
+            7. Outstanding Invoices
+        </a>
+        <a href="/reports?report_type=overdue_invoices" class="btn btn-sm {% if report_type == 'overdue_invoices' %}btn-primary{% else %}btn-outline-secondary{% endif %}">
+            8. Overdue Invoices
+        </a>
+        <a href="/reports?report_type=discount_usage" class="btn btn-sm {% if report_type == 'discount_usage' %}btn-primary{% else %}btn-outline-secondary{% endif %}">
+            9. Discount Usage
+        </a>
+        <a href="/reports?report_type=customer_history" class="btn btn-sm {% if report_type == 'customer_history' %}btn-primary{% else %}btn-outline-secondary{% endif %}">
+            10. Customer Audit History
+        </a>
+    </div>
+</div>
+
+<!-- Report Data Table -->
+<div class="card card-custom p-0 overflow-hidden">
+    <div class="p-3 bg-light border-bottom d-flex justify-content-between align-items-center">
+        <h6 class="fw-bold mb-0 text-uppercase small text-muted">
+            Report View: <span class="text-primary">{{ report_type.replace('_', ' ').title() }}</span> ({{ rows | length }} records)
+        </h6>
+        <form method="get" action="/reports" class="d-flex gap-2">
+            <input type="hidden" name="report_type" value="{{ report_type }}">
+            <input type="text" name="search" class="form-control form-control-sm" placeholder="Filter rows..." value="{{ search }}">
+            <button class="btn btn-sm btn-outline-secondary" type="submit"><i class="fa-solid fa-search"></i></button>
+        </form>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    {% for h in headers %}
+                    <th class="ps-3">{{ h }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in rows %}
+                <tr>
+                    {% for val in r.values() %}
+                    <td class="ps-3 font-monospace small">
+                        {% if val is number %}
+                            {% if val >= 100 %}
+                                ₹{{ "{:,.2f}".format(val) }}
+                            {% else %}
+                                {{ val }}
+                            {% endif %}
+                        {% else %}
+                            {{ val }}
+                        {% endif %}
+                    </td>
+                    {% endfor %}
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="{{ headers | length }}" class="text-center py-5 text-muted">No records found for this report filter.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

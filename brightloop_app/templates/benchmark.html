@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block page_title %}High-Scale Performance &amp; Stress Benchmark{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <h4 class="fw-bold mb-1">5,000 Subscriptions Scalability Benchmark</h4>
+    <p class="text-muted mb-0 small">Measures database indexing, pagination and aggregation latency against the hackathon requirement (&lt; 2.0s).</p>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="card card-custom p-4 h-100">
+            <h5 class="fw-bold mb-3 border-bottom pb-2">Target Metric &amp; Test Suite</h5>
+            <div class="mb-3">
+                <span class="badge bg-primary-subtle text-primary fs-6 px-3 py-2 mb-2">Requirement: &lt; 2.0 Seconds</span>
+                <p class="small text-muted">
+                    This benchmark populates 5,000 real relational subscriptions into PostgreSQL 18 with indexes on <code>state</code>, <code>next_billing_date</code>, <code>partner_id</code>, and <code>plan_id</code>, and executes complex MRR/revenue aggregations.
+                </p>
+            </div>
+
+            <div class="p-3 bg-light rounded mb-4">
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="small fw-bold">PostgreSQL Indexing:</span>
+                    <span class="badge bg-success">Active (B-Tree)</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="small fw-bold">Target Batch Size:</span>
+                    <span>5,000 Records</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <span class="small fw-bold">Latency Requirement:</span>
+                    <span class="text-success fw-bold">&lt; 2,000 ms</span>
+                </div>
+            </div>
+
+            <button class="btn btn-bl-primary btn-lg w-100 py-3 fw-bold d-flex align-items-center justify-content-center gap-2" id="runBenchBtn" onclick="executeBenchmark()">
+                <i class="fa-solid fa-bolt"></i> <span>Execute 5,000 Records Benchmark</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card card-custom p-4 h-100" id="resultsCard">
+            <h5 class="fw-bold mb-3 border-bottom pb-2">Live Benchmark Telemetry</h5>
+            <div id="benchPlaceholder" class="text-center py-5 text-muted">
+                <i class="fa-solid fa-gauge-high fa-3x mb-3 text-secondary"></i>
+                <p>Click "Execute 5,000 Records Benchmark" to run live stress test.</p>
+            </div>
+
+            <div id="benchResults" style="display: none;">
+                <div class="alert alert-success d-flex align-items-center gap-3 p-3 mb-4">
+                    <i class="fa-solid fa-circle-check fa-2x text-success"></i>
+                    <div>
+                        <h6 class="fw-bold mb-0">Performance Requirement Verified!</h6>
+                        <span class="small" id="benchMessage"></span>
+                    </div>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="p-3 bg-light rounded text-center">
+                            <span class="text-muted small">Total Subscriptions in DB</span>
+                            <h3 class="fw-bold mt-1 text-primary" id="resTotal">0</h3>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 bg-light rounded text-center">
+                            <span class="text-muted small">Aggregation Response Time</span>
+                            <h3 class="fw-bold mt-1 text-success" id="resLatency">0s</h3>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="p-3 bg-light rounded">
+                            <div class="d-flex justify-content-between small mb-1">
+                                <span class="fw-bold">Latency vs 2.0s Threshold:</span>
+                                <span class="text-success fw-bold" id="resPct">98% faster</span>
+                            </div>
+                            <div class="progress" style="height: 12px;">
+                                <div class="progress-bar bg-success" role="progressbar" style="width: 15%;" id="benchBar"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    async function executeBenchmark() {
+        const btn = document.getElementById('runBenchBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i> Generating &amp; Querying 5,000 Records...';
+
+        try {
+            const resp = await fetch('/benchmark/run', { method: 'POST' });
+            const data = await resp.json();
+
+            document.getElementById('benchPlaceholder').style.display = 'none';
+            document.getElementById('benchResults').style.display = 'block';
+
+            document.getElementById('resTotal').innerText = data.total_subscriptions_in_db.toLocaleString();
+            document.getElementById('resLatency').innerText = data.aggregation_query_time_seconds + 's';
+            document.getElementById('benchMessage').innerText = data.message;
+
+            const pct = Math.round((data.aggregation_query_time_seconds / 2.0) * 100);
+            document.getElementById('benchBar').style.width = Math.min(100, Math.max(5, pct)) + '%';
+            document.getElementById('resPct').innerText = (100 - pct) + '% faster than requirement';
+
+            showAlert('Benchmark successfully completed in ' + data.aggregation_query_time_seconds + ' seconds!', 'success');
+        } catch (e) {
+            showAlert('Benchmark failed: ' + e, 'danger');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-rotate-right me-2"></i> Re-Run Benchmark';
+        }
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Customer Portal Record Isolation: Subscriptions -->
+        <record id="brightloop_subscription_customer_rule" model="ir.rule">
+            <field name="name">Portal Customer: Personal Subscriptions Only</field>
+            <field name="model_id" ref="model_brightloop_subscription"/>
+            <field name="domain_force">[('partner_id', '=', user.partner_id.id)]</field>
+            <field name="groups" eval="[(4, ref('group_brightloop_customer'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Customer Portal Record Isolation: Quotations -->
+        <record id="brightloop_quotation_customer_rule" model="ir.rule">
+            <field name="name">Portal Customer: Personal Quotations Only</field>
+            <field name="model_id" ref="model_brightloop_quotation"/>
+            <field name="domain_force">[('partner_id', '=', user.partner_id.id)]</field>
+            <field name="groups" eval="[(4, ref('group_brightloop_customer'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Staff and Admin Global Rule: Subscriptions -->
+        <record id="brightloop_subscription_internal_rule" model="ir.rule">
+            <field name="name">Internal Staff &amp; Admin: All Subscriptions</field>
+            <field name="model_id" ref="model_brightloop_subscription"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_brightloop_staff'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- Staff and Admin Global Rule: Quotations -->
+        <record id="brightloop_quotation_internal_rule" model="ir.rule">
+            <field name="name">Internal Staff &amp; Admin: All Quotations</field>
+            <field name="model_id" ref="model_brightloop_quotation"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_brightloop_staff'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+    </data>
+</odoo>

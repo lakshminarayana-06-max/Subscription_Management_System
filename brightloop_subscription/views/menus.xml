@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Root Menu -->
+    <menuitem id="brightloop_menu_root"
+              name="Brightloop Subscriptions"
+              web_icon="brightloop_subscription,static/description/icon.png"
+              sequence="10"/>
+
+    <!-- 1. Dashboard -->
+    <menuitem id="brightloop_menu_dashboard"
+              name="Dashboard"
+              parent="brightloop_menu_root"
+              action="action_brightloop_dashboard"
+              sequence="10"/>
+
+    <!-- 2. Customers -->
+    <menuitem id="brightloop_menu_customers"
+              name="Customers"
+              parent="brightloop_menu_root"
+              action="action_brightloop_customers"
+              sequence="20"/>
+
+    <!-- 3. Products -->
+    <menuitem id="brightloop_menu_products"
+              name="Products"
+              parent="brightloop_menu_root"
+              action="action_brightloop_products"
+              sequence="30"/>
+
+    <!-- 4. Product Variants -->
+    <menuitem id="brightloop_menu_product_variants"
+              name="Product Variants"
+              parent="brightloop_menu_root"
+              action="action_brightloop_product_variants"
+              sequence="40"/>
+
+    <!-- 5. Subscription Plans -->
+    <menuitem id="brightloop_menu_subscription_plans"
+              name="Subscription Plans"
+              parent="brightloop_menu_root"
+              action="action_brightloop_subscription_plans"
+              sequence="50"/>
+
+    <!-- 6. Quotations -->
+    <menuitem id="brightloop_menu_quotations"
+              name="Quotations"
+              parent="brightloop_menu_root"
+              action="action_brightloop_quotations"
+              sequence="60"/>
+
+    <!-- 7. Subscriptions -->
+    <menuitem id="brightloop_menu_subscriptions"
+              name="Subscriptions"
+              parent="brightloop_menu_root"
+              action="action_brightloop_subscriptions"
+              sequence="70"/>
+
+    <!-- 8. Invoices -->
+    <menuitem id="brightloop_menu_invoices"
+              name="Invoices"
+              parent="brightloop_menu_root"
+              action="action_brightloop_invoices"
+              sequence="80"/>
+
+    <!-- 9. Discounts (Admin only) -->
+    <menuitem id="brightloop_menu_discounts"
+              name="Discounts"
+              parent="brightloop_menu_root"
+              action="action_brightloop_discounts"
+              groups="group_brightloop_admin"
+              sequence="90"/>
+
+    <!-- 10. Payments -->
+    <menuitem id="brightloop_menu_payments"
+              name="Payments"
+              parent="brightloop_menu_root"
+              action="action_brightloop_payments"
+              sequence="100"/>
+
+    <!-- 11. Reports -->
+    <menuitem id="brightloop_menu_reports"
+              name="Reports"
+              parent="brightloop_menu_root"
+              action="action_brightloop_reports"
+              sequence="110"/>
+
+    <!-- 12. Staff Management (Admin only) -->
+    <menuitem id="brightloop_menu_staff"
+              name="Staff Management"
+              parent="brightloop_menu_root"
+              action="action_brightloop_staff"
+              groups="group_brightloop_admin"
+              sequence="120"/>
+
+    <!-- 13. Settings (Admin only) -->
+    <menuitem id="brightloop_menu_settings"
+              name="Settings"
+              parent="brightloop_menu_root"
+              action="action_brightloop_settings"
+              groups="group_brightloop_admin"
+              sequence="130"/>
+</odoo>

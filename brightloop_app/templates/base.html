@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Brightloop Software – Subscription Management System{% endblock %}</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome 6 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+    <style>
+        :root {
+            --bl-primary: #4f46e5;
+            --bl-primary-hover: #4338ca;
+            --bl-bg: #f8fafc;
+            --bl-sidebar-bg: #0f172a;
+            --bl-sidebar-text: #94a3b8;
+            --bl-sidebar-active: #38bdf8;
+            --bl-card-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bl-bg);
+            color: #1e293b;
+        }
+        .sidebar {
+            width: 260px;
+            min-height: 100vh;
+            background-color: var(--bl-sidebar-bg);
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+        }
+        .sidebar-brand {
+            padding: 20px 24px;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: white;
+            border-bottom: 1px solid #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .sidebar-brand i {
+            color: var(--bl-sidebar-active);
+        }
+        .sidebar-nav {
+            padding: 16px 0;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+        .nav-item-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 24px;
+            color: var(--bl-sidebar-text);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        .nav-item-link:hover, .nav-item-link.active {
+            color: white;
+            background-color: rgba(255, 255, 255, 0.08);
+            border-left: 4px solid var(--bl-sidebar-active);
+        }
+        .nav-item-link.active {
+            color: var(--bl-sidebar-active);
+            font-weight: 600;
+        }
+        .nav-item-link i {
+            width: 20px;
+            text-align: center;
+        }
+        .main-content {
+            margin-left: 260px;
+            padding: 24px 32px;
+            min-height: 100vh;
+        }
+        .topbar {
+            background: white;
+            padding: 14px 24px;
+            border-radius: 10px;
+            box-shadow: var(--bl-card-shadow);
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .role-badge {
+            font-size: 0.8rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+        .card-custom {
+            border: none;
+            border-radius: 12px;
+            box-shadow: var(--bl-card-shadow);
+            background: white;
+            transition: transform 0.2s;
+        }
+        .kpi-card {
+            border-left: 5px solid var(--bl-primary);
+        }
+        .btn-bl-primary {
+            background-color: var(--bl-primary);
+            color: white;
+            font-weight: 500;
+        }
+        .btn-bl-primary:hover {
+            background-color: var(--bl-primary-hover);
+            color: white;
+        }
+        .badge-status {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            font-weight: 600;
+        }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+    <!-- Sidebar Navigation (13 Menus) -->
+    <div class="sidebar">
+        <div class="sidebar-brand">
+            <i class="fa-solid fa-arrows-spin"></i>
+            <span>Brightloop</span>
+        </div>
+        <div class="sidebar-nav">
+            <a href="/" class="nav-item-link {% if request.url.path == '/' %}active{% endif %}">
+                <i class="fa-solid fa-chart-pie"></i> <span>1. Dashboard</span>
+            </a>
+            <a href="/customers" class="nav-item-link {% if '/customers' in request.url.path %}active{% endif %}">
+                <i class="fa-solid fa-users"></i> <span>2. Customers</span>
+            </a>
+            <a href="/products" class="nav-item-link {% if '/products' in request.url.path %}active{% endif %}">
+                <i class="fa-solid fa-box-open"></i> <span>3. Products</span>
+            </a>
+            <a href="/product-variants" class="nav-item-link {% if '/product-variants' in request.url.path %}active{% endif %}">
+                <i class="fa-solid fa-tags"></i> <span>4. Product Variants</span>
+            </a>
+            <a href="/plans" class="nav-item-link {% if '/plans' in request.url.path %}active{% endif %}">
+                <i class="fa-solid fa-calendar-check"></i> <span>5. Subscription Plans</span>
+            </a>
+            <a href="/quotations" class="nav-item-link {% if '/quotations' in request.url.path %}active{% endif %}">
+                <i class="fa-solid fa-file-invoice"></i> <span>6. Quotations</span>
+            </a>
+            <a href="/subscriptions" class="nav-item-link {% if '/subscriptions' in request.url.path %}active{% endif %}">
+                <i class="fa-solid fa-sync"></i> <span>7. Subscriptions</span>
+            </a>
+            <a href="/invoices" class="nav-item-link {% if '/invoices' in request.url.path %}active{% endif %}">
+                <i class="fa-solid fa-receipt"></i> <span>8. Invoices</span>
+            </a>
+            {% if user.role == 'admin' %}
+            <a href="/discounts" class="nav-item-link {% if '/discounts' in request.url.path %}active{% endif %}">
+                <i class="fa-solid fa-percent"></i> <span>9. Discounts (Admin)</span>
+            </a>
+            {% endif %}
+            <a href="/payments" class="nav-item-link {% if '/payments' in request.url.path %}active{% endif %}">
+                <i class="fa-solid fa-credit-card"></i> <span>10. Payments</span>
+            </a>
+            <a href="/reports" class="nav-item-link {% if '/reports' in request.url.path %}active{% endif %}">
+                <i class="fa-solid fa-chart-line"></i> <span>11. Reports (10)</span>
+            </a>
+            {% if user.role == 'admin' %}
+            <a href="/staff" class="nav-item-link {% if '/staff' in request.url.path %}active{% endif %}">
+                <i class="fa-solid fa-user-shield"></i> <span>12. Staff Management</span>
+            </a>
+            {% endif %}
+            <a href="/settings" class="nav-item-link {% if '/settings' in request.url.path %}active{% endif %}">
+                <i class="fa-solid fa-gear"></i> <span>13. Settings</span>
+            </a>
+            <div class="px-3 my-3"><hr style="border-color: #334155;"></div>
+            <a href="/portal" class="nav-item-link {% if '/portal' in request.url.path %}active{% endif %}">
+                <i class="fa-solid fa-globe"></i> <span>Customer Portal</span>
+            </a>
+            <a href="/benchmark" class="nav-item-link {% if '/benchmark' in request.url.path %}active{% endif %}">
+                <i class="fa-solid fa-gauge-high"></i> <span>5,000 Subs Benchmark</span>
+            </a>
+        </div>
+        <div class="p-3 bg-dark border-top border-secondary text-secondary small">
+            <div><i class="fa-solid fa-database text-success me-1"></i> PostgreSQL 18 Online</div>
+            <div class="mt-1">Currency: Indian Rupee (₹)</div>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+        <!-- Topbar with Role Switcher -->
+        <div class="topbar">
+            <div class="d-flex align-items-center gap-3">
+                <h5 class="mb-0 fw-bold">{% block page_title %}Subscription Management System{% endblock %}</h5>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <!-- Role Switcher for Hackathon Testing -->
+                <div class="dropdown">
+                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown">
+                        <i class="fa-solid fa-user-tag text-primary"></i>
+                        <span>Role: <strong>{{ user.role.upper() }}</strong></span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow">
+                        <li><h6 class="dropdown-header">Switch Role for Demo:</h6></li>
+                        <li><a class="dropdown-item {% if user.role == 'admin' %}active{% endif %}" href="/switch-role/admin"><i class="fa-solid fa-crown text-danger me-2"></i>Administrator</a></li>
+                        <li><a class="dropdown-item {% if user.role == 'staff' %}active{% endif %}" href="/switch-role/staff"><i class="fa-solid fa-id-badge text-primary me-2"></i>Internal Staff</a></li>
+                        <li><a class="dropdown-item {% if user.role == 'customer' %}active{% endif %}" href="/switch-role/customer"><i class="fa-solid fa-user text-success me-2"></i>Customer (Portal)</a></li>
+                    </ul>
+                </div>
+
+                <div class="d-flex align-items-center gap-2 border-start ps-3">
+                    <div class="text-end">
+                        <div class="fw-bold small">{{ user.name }}</div>
+                        <div class="text-muted" style="font-size: 0.75rem;">{{ user.email }}</div>
+                    </div>
+                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Flash messages / Notifications -->
+        <div id="alert-container"></div>
+
+        <!-- Page Body -->
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function showAlert(msg, type='success') {
+            const container = document.getElementById('alert-container');
+            container.innerHTML = `
+                <div class="alert alert-${type} alert-dismissible fade show shadow-sm" role="alert">
+                    <i class="fa-solid fa-circle-check me-2"></i> ${msg}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            `;
+            setTimeout(() => { container.innerHTML = ''; }, 6000);
+        }
+    </script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

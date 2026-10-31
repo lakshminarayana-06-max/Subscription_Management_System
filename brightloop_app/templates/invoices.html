@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block page_title %}Invoice Management &amp; Recurring Billing{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+        <h4 class="fw-bold mb-1">Invoices &amp; Billing Records</h4>
+        <p class="text-muted mb-0 small">Automated recurring invoices, payment tracking and accounts receivable management.</p>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+        <form method="get" action="/invoices" class="d-flex gap-2">
+            <input type="text" name="search" class="form-control form-control-sm" placeholder="Search invoice..." value="{{ search }}">
+            <button class="btn btn-sm btn-outline-secondary" type="submit"><i class="fa-solid fa-search"></i></button>
+        </form>
+        <button class="btn btn-sm btn-success d-flex align-items-center gap-2 shadow-sm" onclick="runBillingCron()">
+            <i class="fa-solid fa-play"></i> <span>Run Billing Cron Now</span>
+        </button>
+    </div>
+</div>
+
+<!-- Filter Tabs -->
+<div class="d-flex gap-2 mb-3">
+    <a href="/invoices" class="btn btn-sm {% if not filter_type %}btn-dark{% else %}btn-outline-secondary{% endif %}">All Invoices</a>
+    <a href="/invoices?filter_type=unpaid" class="btn btn-sm {% if filter_type == 'unpaid' %}btn-warning{% else %}btn-outline-warning{% endif %}">Unpaid / Dues</a>
+    <a href="/invoices?filter_type=overdue" class="btn btn-sm {% if filter_type == 'overdue' %}btn-danger{% else %}btn-outline-danger{% endif %}">Overdue</a>
+    <a href="/invoices?filter_type=paid" class="btn btn-sm {% if filter_type == 'paid' %}btn-success{% else %}btn-outline-success{% endif %}">Paid</a>
+</div>
+
+<div class="card card-custom p-0 overflow-hidden">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th class="ps-4">Invoice #</th>
+                    <th>Customer</th>
+                    <th>Subscription Ref</th>
+                    <th>Billing Period</th>
+                    <th>Due Date</th>
+                    <th class="text-end">Total Amount (₹)</th>
+                    <th class="text-end">Amount Due (₹)</th>
+                    <th class="text-center">Status</th>
+                    <th class="text-end pe-4">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for inv in invoices %}
+                <tr class="{% if inv.payment_state != 'paid' and inv.invoice_date_due < today %}table-danger-subtle{% endif %}">
+                    <td class="ps-4 fw-bold font-monospace">
+                        <a href="/invoices/{{ inv.id }}" class="text-decoration-none text-primary">
+                            {{ inv.name }}
+                        </a>
+                    </td>
+                    <td class="fw-semibold text-dark">{{ inv.customer_name }}</td>
+                    <td>
+                        {% if inv.subscription_id %}
+                        <a href="/subscriptions/{{ inv.subscription_id }}" class="text-decoration-none small text-muted">
+                            <i class="fa-solid fa-link me-1"></i> {{ inv.sub_name or 'Linked Sub' }}
+                        </a>
+                        {% else %}
+                        <span class="text-muted small">Direct</span>
+                        {% endif %}
+                    </td>
+                    <td class="small text-muted">{{ inv.billing_period_start }} &rarr; {{ inv.billing_period_end }}</td>
+                    <td>
+                        <span class="small {% if inv.payment_state != 'paid' and inv.invoice_date_due < today %}text-danger fw-bold{% else %}text-muted{% endif %}">
+                            {{ inv.invoice_date_due }}
+                        </span>
+                    </td>
+                    <td class="text-end fw-bold">₹{{ "{:,.2f}".format(inv.amount_total) }}</td>
+                    <td class="text-end fw-bold {% if inv.amount_residual > 0 %}text-danger{% else %}text-success{% endif %}">
+                        ₹{{ "{:,.2f}".format(inv.amount_residual) }}
+                    </td>
+                    <td class="text-center">
+                        {% if inv.payment_state == 'paid' %}
+                        <span class="badge bg-success-subtle text-success">Paid</span>
+                        {% elif inv.payment_state == 'partial' %}
+                        <span class="badge bg-warning-subtle text-warning">Partial Due</span>
+                        {% elif inv.invoice_date_due < today %}
+                        <span class="badge bg-danger-subtle text-danger">Overdue</span>
+                        {% else %}
+                        <span class="badge bg-info-subtle text-info">Unpaid</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-end pe-4">
+                        <a href="/invoices/{{ inv.id }}" class="btn btn-sm btn-outline-secondary">
+                            View <i class="fa-solid fa-file-invoice ms-1"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="9" class="text-center py-5 text-muted">No invoices found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    async function runBillingCron() {
+        if (!confirm('Execute the Automated Background Recurring Billing Cron now?')) return;
+        try {
+            const resp = await fetch('/invoices/run-cron', { method: 'POST' });
+            const data = await resp.json();
+            showAlert(data.message, 'success');
+            setTimeout(() => { location.reload(); }, 2000);
+        } catch (e) {
+            showAlert('Error: ' + e, 'danger');
+        }
+    }
+</script>
+{% endblock %}

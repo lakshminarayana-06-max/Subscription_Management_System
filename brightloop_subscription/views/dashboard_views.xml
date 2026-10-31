@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Client Action for Dashboard -->
+    <record id="action_brightloop_dashboard" model="ir.actions.client">
+        <field name="name">Brightloop Financial Dashboard</field>
+        <field name="tag">brightloop_dashboard_tag</field>
+        <field name="target">current</field>
+    </record>
+
+    <!-- Window Action for 10 Reports -->
+    <record id="action_brightloop_reports" model="ir.actions.act_window">
+        <field name="name">Subscription &amp; Revenue Reports</field>
+        <field name="res_model">brightloop.subscription</field>
+        <field name="view_mode">pivot,graph,tree</field>
+        <field name="context">{'search_default_group_plan': 1}</field>
+    </record>
+
+    <!-- Settings Window Action -->
+    <record id="action_brightloop_settings" model="ir.actions.act_window">
+        <field name="name">Subscription Settings</field>
+        <field name="res_model">res.company</field>
+        <field name="view_mode">form</field>
+        <field name="res_id" ref="base.main_company"/>
+    </record>
+</odoo>

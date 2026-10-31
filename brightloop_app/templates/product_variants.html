@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block page_title %}Product Variants &amp; Brand Adjustments{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+        <h4 class="fw-bold mb-1">Product Variants &amp; Attributes</h4>
+        <p class="text-muted mb-0 small">Configurable brand editions with automatic price adjustments (e.g., Odoo Brand +₹560).</p>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+        <form method="get" action="/product-variants" class="d-flex gap-2">
+            <input type="text" name="search" class="form-control form-control-sm" placeholder="Search variant or brand..." value="{{ search }}">
+            <button class="btn btn-sm btn-outline-secondary" type="submit"><i class="fa-solid fa-search"></i></button>
+        </form>
+    </div>
+</div>
+
+<div class="card card-custom p-0 overflow-hidden">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th class="ps-4">Product Name</th>
+                    <th>Brand / Edition Attribute</th>
+                    <th class="text-end">Base Price (₹)</th>
+                    <th class="text-end">Brand Adjustment (₹)</th>
+                    <th class="text-end">Final Calculated Price (₹)</th>
+                    <th class="text-end">Cost Price (₹)</th>
+                    <th class="text-center pe-4">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for v in variants %}
+                <tr>
+                    <td class="ps-4">
+                        <div class="fw-bold text-dark">{{ v.product_name }}</div>
+                        <span class="text-muted small font-monospace">{{ v.default_code }}</span>
+                    </td>
+                    <td>
+                        {% if 'odoo' in v.brand_name.lower() %}
+                        <span class="badge bg-primary text-white fs-6"><i class="fa-solid fa-star me-1"></i> {{ v.brand_name }}</span>
+                        {% elif 'enterprise' in v.brand_name.lower() %}
+                        <span class="badge bg-dark text-white"><i class="fa-solid fa-crown me-1"></i> {{ v.brand_name }}</span>
+                        {% else %}
+                        <span class="badge bg-light text-dark border">{{ v.brand_name }}</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-end">₹{{ "{:,.2f}".format(v.list_price) }}</td>
+                    <td class="text-end">
+                        {% if v.brand_price_extra > 0 %}
+                        <span class="badge bg-success-subtle text-success fw-bold">+₹{{ "{:,.2f}".format(v.brand_price_extra) }}</span>
+                        {% else %}
+                        <span class="text-muted">₹0.00</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-end fw-bold text-primary fs-6">₹{{ "{:,.2f}".format(v.final_price) }}</td>
+                    <td class="text-end text-muted">₹{{ "{:,.2f}".format(v.standard_price) }}</td>
+                    <td class="text-center pe-4">
+                        <span class="badge bg-success-subtle text-success">Available</span>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7" class="text-center py-5 text-muted">No variants found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

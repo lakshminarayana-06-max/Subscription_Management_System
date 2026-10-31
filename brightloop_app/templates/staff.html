@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block page_title %}Staff Management (Admin Only){% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+        <h4 class="fw-bold mb-1">Internal Staff &amp; Team Accounts</h4>
+        <p class="text-muted mb-0 small">Only administrators can provision internal staff accounts. Enforces strict password complexity.</p>
+    </div>
+    <div>
+        <button class="btn btn-sm btn-bl-primary d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#newStaffModal">
+            <i class="fa-solid fa-user-shield"></i> <span>Add Staff Member</span>
+        </button>
+    </div>
+</div>
+
+<div class="card card-custom p-0 overflow-hidden">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th class="ps-4">Staff Name</th>
+                    <th>Email / Login</th>
+                    <th>Assigned Role</th>
+                    <th>Created Date</th>
+                    <th class="text-center pe-4">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in staff_users %}
+                <tr>
+                    <td class="ps-4 fw-bold text-dark">{{ s.name }}</td>
+                    <td><i class="fa-regular fa-envelope me-1 text-muted"></i> {{ s.login }}</td>
+                    <td>
+                        {% if s.role == 'admin' %}
+                        <span class="badge bg-danger-subtle text-danger"><i class="fa-solid fa-crown me-1"></i> Administrator</span>
+                        {% else %}
+                        <span class="badge bg-primary-subtle text-primary"><i class="fa-solid fa-id-badge me-1"></i> Internal Staff</span>
+                        {% endif %}
+                    </td>
+                    <td class="small text-muted">{{ s.created_at }}</td>
+                    <td class="text-center pe-4">
+                        <span class="badge bg-success-subtle text-success">Active Account</span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal: New Staff -->
+<div class="modal fade" id="newStaffModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="/staff/create" method="post" id="staffForm">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">Create Staff Account</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Full Name *</label>
+                        <input type="text" name="name" class="form-control" required placeholder="e.g. Ananya Sen">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Email Address *</label>
+                        <input type="email" name="email" class="form-control" required placeholder="ananya@brightloop.com">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Role *</label>
+                        <select name="role" class="form-select" required>
+                            <option value="staff" selected>Internal Staff (Operations / Billing)</option>
+                            <option value="admin">Administrator (Full Access)</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Password *</label>
+                        <input type="password" name="password" id="pwdInput" class="form-control" required placeholder="Minimum 9 characters">
+                        <div class="bg-light p-3 rounded small mt-2">
+                            <div class="fw-bold text-muted mb-1">Required Complexity:</div>
+                            <div id="rule-len" class="text-danger"><i class="fa-solid fa-circle-xmark me-1"></i> More than 8 characters</div>
+                            <div id="rule-upper" class="text-danger"><i class="fa-solid fa-circle-xmark me-1"></i> At least 1 uppercase letter (A-Z)</div>
+                            <div id="rule-lower" class="text-danger"><i class="fa-solid fa-circle-xmark me-1"></i> At least 1 lowercase letter (a-z)</div>
+                            <div id="rule-special" class="text-danger"><i class="fa-solid fa-circle-xmark me-1"></i> At least 1 special character (!@#$%^&*)</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" id="submitBtn" class="btn btn-primary btn-sm" disabled>Create Account</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    const pwdInput = document.getElementById('pwdInput');
+    const submitBtn = document.getElementById('submitBtn');
+
+    pwdInput.addEventListener('input', () => {
+        const val = pwdInput.value;
+        const hasLen = val.length > 8;
+        const hasUpper = /[A-Z]/.test(val);
+        const hasLower = /[a-z]/.test(val);
+        const hasSpecial = /[^A-Za-z0-9]/.test(val);
+
+        updateRule('rule-len', hasLen, 'More than 8 characters');
+        updateRule('rule-upper', hasUpper, 'At least 1 uppercase letter (A-Z)');
+        updateRule('rule-lower', hasLower, 'At least 1 lowercase letter (a-z)');
+        updateRule('rule-special', hasSpecial, 'At least 1 special character (!@#$%^&*)');
+
+        submitBtn.disabled = !(hasLen && hasUpper && hasLower && hasSpecial);
+    });
+
+    function updateRule(elementId, passed, text) {
+        const el = document.getElementById(elementId);
+        if (passed) {
+            el.className = 'text-success';
+            el.innerHTML = `<i class="fa-solid fa-circle-check me-1"></i> ${text}`;
+        } else {
+            el.className = 'text-danger';
+            el.innerHTML = `<i class="fa-solid fa-circle-xmark me-1"></i> ${text}`;
+        }
+    }
+</script>
+{% endblock %}

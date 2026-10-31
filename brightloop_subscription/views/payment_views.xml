@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Subscription Payment Tree View -->
+    <record id="view_brightloop_payment_tree" model="ir.ui.view">
+        <field name="name">brightloop.payment.tree</field>
+        <field name="model">account.payment</field>
+        <field name="arch" type="xml">
+            <tree string="Payments" sample="1">
+                <field name="name" string="Payment ID"/>
+                <field name="partner_id" string="Customer"/>
+                <field name="invoice_id" string="Related Invoice"/>
+                <field name="custom_payment_method" widget="badge" 
+                       decoration-info="custom_payment_method == 'upi'"
+                       decoration-primary="custom_payment_method == 'bank'"
+                       decoration-success="custom_payment_method == 'credit_card'"/>
+                <field name="amount" widget="monetary"/>
+                <field name="date" string="Payment Date"/>
+                <field name="transaction_reference" string="Transaction Ref / UTR"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'draft'"
+                       decoration-success="state == 'posted'"
+                       decoration-danger="state == 'cancel'"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Payment Search View -->
+    <record id="view_brightloop_payment_search" model="ir.ui.view">
+        <field name="name">brightloop.payment.search</field>
+        <field name="model">account.payment</field>
+        <field name="arch" type="xml">
+            <search string="Search Payments">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="transaction_reference"/>
+                <filter string="UPI Payments" name="filter_upi" domain="[('custom_payment_method', '=', 'upi')]"/>
+                <filter string="Bank Transfer" name="filter_bank" domain="[('custom_payment_method', '=', 'bank')]"/>
+                <filter string="Credit Card" name="filter_card" domain="[('custom_payment_method', '=', 'credit_card')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Customer" name="group_customer" context="{'group_by': 'partner_id'}"/>
+                    <filter string="Payment Method" name="group_method" context="{'group_by': 'custom_payment_method'}"/>
+                    <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action for Payments -->
+    <record id="action_brightloop_payments" model="ir.actions.act_window">
+        <field name="name">Payments</field>
+        <field name="res_model">account.payment</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_brightloop_payment_tree"/>
+        <field name="search_view_id" ref="view_brightloop_payment_search"/>
+        <field name="domain">[('payment_type', '=', 'inbound')]</field>
+        <field name="context">{'default_payment_type': 'inbound', 'default_partner_type': 'customer'}</field>
+    </record>
+</odoo>

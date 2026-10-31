@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Subscription PDF Report Action -->
+    <record id="action_report_brightloop_subscription" model="ir.actions.report">
+        <field name="name">Subscription Summary</field>
+        <field name="model">brightloop.subscription</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">brightloop_subscription.report_subscription_template</field>
+        <field name="report_file">brightloop_subscription.report_subscription_template</field>
+        <field name="binding_model_id" ref="model_brightloop_subscription"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- Subscription QWeb Template -->
+    <template id="report_subscription_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="sub">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <div class="row">
+                            <div class="col-8">
+                                <h2>Brightloop Software – Subscription Contract</h2>
+                                <h4>Reference: <span t-field="sub.name"/></h4>
+                            </div>
+                            <div class="col-4 text-end">
+                                <span class="badge bg-primary fs-6 p-2"><span t-field="sub.state"/></span>
+                            </div>
+                        </div>
+
+                        <div class="row mt-4 mb-4">
+                            <div class="col-6">
+                                <strong>Customer Details:</strong>
+                                <div><span t-field="sub.partner_id.name"/></div>
+                                <div><span t-field="sub.partner_id.street"/></div>
+                                <div><span t-field="sub.partner_id.city"/>, <span t-field="sub.partner_id.zip"/></div>
+                                <div>Email: <span t-field="sub.partner_id.email"/></div>
+                            </div>
+                            <div class="col-6">
+                                <strong>Subscription Details:</strong>
+                                <div><strong>Plan:</strong> <span t-field="sub.plan_id.name"/></div>
+                                <div><strong>Billing Frequency:</strong> <span t-field="sub.billing_frequency"/></div>
+                                <div><strong>Start Date:</strong> <span t-field="sub.start_date"/></div>
+                                <div><strong>Next Billing Date:</strong> <span t-field="sub.next_billing_date"/></div>
+                                <div><strong>Expiry Date:</strong> <span t-field="sub.expiry_date"/></div>
+                            </div>
+                        </div>
+
+                        <table class="table table-sm o_main_table mt-4">
+                            <thead>
+                                <tr>
+                                    <th>Product / Service</th>
+                                    <th class="text-end">Quantity</th>
+                                    <th class="text-end">Unit Price (₹)</th>
+                                    <th class="text-end">Taxes</th>
+                                    <th class="text-end">Subtotal (₹)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="sub.line_ids" t-as="line">
+                                    <tr>
+                                        <td><span t-field="line.name"/></td>
+                                        <td class="text-end"><span t-field="line.quantity"/></td>
+                                        <td class="text-end"><span t-field="line.unit_price"/></td>
+                                        <td class="text-end"><span t-esc="', '.join(map(lambda x: (x.name), line.tax_ids))"/></td>
+                                        <td class="text-end"><span t-field="line.price_subtotal"/></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+
+                        <div class="clearfix mt-4">
+                            <div class="row justify-content-end">
+                                <div class="col-4">
+                                    <table class="table table-sm">
+                                        <tr class="border-black">
+                                            <td><strong>Subtotal</strong></td>
+                                            <td class="text-end"><span t-field="sub.amount_untaxed"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Taxes</strong></td>
+                                            <td class="text-end"><span t-field="sub.amount_tax"/></td>
+                                        </tr>
+                                        <tr t-if="sub.amount_discount">
+                                            <td><strong>Discount</strong></td>
+                                            <td class="text-end"><span t-field="sub.amount_discount"/></td>
+                                        </tr>
+                                        <tr class="border-black o_total">
+                                            <td><strong>Total Recurring Amount</strong></td>
+                                            <td class="text-end"><strong><span t-field="sub.amount_total"/></strong></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

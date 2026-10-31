@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Subscription Plan Tree View -->
+    <record id="view_brightloop_subscription_plan_tree" model="ir.ui.view">
+        <field name="name">brightloop.subscription.plan.tree</field>
+        <field name="model">brightloop.subscription.plan</field>
+        <field name="arch" type="xml">
+            <tree string="Subscription Plans" sample="1">
+                <field name="name"/>
+                <field name="product_id"/>
+                <field name="billing_frequency" widget="badge" 
+                       decoration-info="billing_frequency == 'daily'" 
+                       decoration-primary="billing_frequency == 'weekly'" 
+                       decoration-success="billing_frequency == 'monthly'" 
+                       decoration-warning="billing_frequency == 'yearly'"/>
+                <field name="price" widget="monetary"/>
+                <field name="min_quantity"/>
+                <field name="start_date"/>
+                <field name="end_date"/>
+                <field name="subscription_count" string="Active Subs"/>
+                <field name="active" widget="boolean_toggle"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Subscription Plan Form View -->
+    <record id="view_brightloop_subscription_plan_form" model="ir.ui.view">
+        <field name="name">brightloop.subscription.plan.form</field>
+        <field name="model">brightloop.subscription.plan</field>
+        <field name="arch" type="xml">
+            <form string="Subscription Plan">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_subscriptions" type="object" class="oe_stat_button" icon="fa-refresh">
+                            <field name="subscription_count" widget="statinfo" string="Subscriptions"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <div class="oe_title">
+                        <label for="name" string="Plan Name"/>
+                        <h1><field name="name" placeholder="e.g. Enterprise Monthly Pro"/></h1>
+                    </div>
+                    <group>
+                        <group name="plan_core" string="Pricing &amp; Frequency">
+                            <field name="product_id"/>
+                            <field name="billing_frequency"/>
+                            <field name="price" widget="monetary"/>
+                            <field name="min_quantity"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                        <group name="plan_availability" string="Availability &amp; Lifecycle">
+                            <field name="start_date"/>
+                            <field name="end_date"/>
+                            <field name="auto_close"/>
+                            <field name="early_closure_allowed"/>
+                            <field name="pause_allowed"/>
+                            <field name="renewal_allowed"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Description &amp; Terms">
+                            <field name="description" placeholder="Plan highlights, SLAs, and customer terms..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Subscription Plan Search View -->
+    <record id="view_brightloop_subscription_plan_search" model="ir.ui.view">
+        <field name="name">brightloop.subscription.plan.search</field>
+        <field name="model">brightloop.subscription.plan</field>
+        <field name="arch" type="xml">
+            <search string="Search Plans">
+                <field name="name"/>
+                <field name="product_id"/>
+                <filter string="Monthly Plans" name="filter_monthly" domain="[('billing_frequency', '=', 'monthly')]"/>
+                <filter string="Yearly Plans" name="filter_yearly" domain="[('billing_frequency', '=', 'yearly')]"/>
+                <separator/>
+                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Billing Frequency" name="group_frequency" context="{'group_by': 'billing_frequency'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Subscription Plan Action -->
+    <record id="action_brightloop_subscription_plans" model="ir.actions.act_window">
+        <field name="name">Subscription Plans</field>
+        <field name="res_model">brightloop.subscription.plan</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_brightloop_subscription_plan_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first Brightloop Subscription Plan!
+            </p>
+            <p>
+                Configure billing frequencies (daily, weekly, monthly, yearly), minimum quantities, and term closure rules.
+            </p>
+        </field>
+    </record>
+</odoo>

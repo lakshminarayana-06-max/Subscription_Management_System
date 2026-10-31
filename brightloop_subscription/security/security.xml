@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <!-- Module Category -->
+        <record id="module_category_brightloop_subscription" model="ir.module.category">
+            <field name="name">Brightloop Subscription Management</field>
+            <field name="description">User roles and permissions for Brightloop Software Subscription System</field>
+            <field name="sequence">25</field>
+        </record>
+
+        <!-- Role 1: Customer (Portal User) -->
+        <record id="group_brightloop_customer" model="res.groups">
+            <field name="name">Customer (Portal)</field>
+            <field name="category_id" ref="module_category_brightloop_subscription"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_portal'))]"/>
+            <field name="comment">External customers accessing personal subscriptions, invoices, and payment history.</field>
+        </record>
+
+        <!-- Role 2: Internal Staff -->
+        <record id="group_brightloop_staff" model="res.groups">
+            <field name="name">Internal Staff</field>
+            <field name="category_id" ref="module_category_brightloop_subscription"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="comment">Internal operations team managing customers, quotations, subscriptions, invoices, and payments.</field>
+        </record>
+
+        <!-- Role 3: Administrator -->
+        <record id="group_brightloop_admin" model="res.groups">
+            <field name="name">Administrator</field>
+            <field name="category_id" ref="module_category_brightloop_subscription"/>
+            <field name="implied_ids" eval="[(4, ref('group_brightloop_staff')), (4, ref('base.group_system'))]"/>
+            <field name="comment">Full system administrator with product/variant creation, discount rule configuration, staff creation, and financial reports.</field>
+        </record>
+    </data>
+</odoo>
