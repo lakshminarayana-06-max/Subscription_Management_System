@@ -186,6 +186,10 @@
             <a href="/benchmark" class="nav-item-link {% if '/benchmark' in request.url.path %}active{% endif %}">
                 <i class="fa-solid fa-gauge-high"></i> <span>5,000 Subs Benchmark</span>
             </a>
+            <div class="px-3 my-2"><hr style="border-color: #334155;"></div>
+            <a href="/login" class="nav-item-link {% if '/login' in request.url.path %}active{% endif %}">
+                <i class="fa-solid fa-right-to-bracket text-warning"></i> <span>Login / Credentials</span>
+            </a>
         </div>
         <div class="p-3 bg-dark border-top border-secondary text-secondary small">
             <div><i class="fa-solid fa-database text-success me-1"></i> PostgreSQL 18 Online</div>
@@ -205,24 +209,31 @@
                 <div class="dropdown">
                     <button class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown">
                         <i class="fa-solid fa-user-tag text-primary"></i>
-                        <span>Role: <strong>{{ user.role.upper() }}</strong></span>
+                        <span>Role: <strong>{{ (user.role or 'GUEST').upper() }}</strong></span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end shadow">
                         <li><h6 class="dropdown-header">Switch Role for Demo:</h6></li>
                         <li><a class="dropdown-item {% if user.role == 'admin' %}active{% endif %}" href="/switch-role/admin"><i class="fa-solid fa-crown text-danger me-2"></i>Administrator</a></li>
                         <li><a class="dropdown-item {% if user.role == 'staff' %}active{% endif %}" href="/switch-role/staff"><i class="fa-solid fa-id-badge text-primary me-2"></i>Internal Staff</a></li>
                         <li><a class="dropdown-item {% if user.role == 'customer' %}active{% endif %}" href="/switch-role/customer"><i class="fa-solid fa-user text-success me-2"></i>Customer (Portal)</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="/login"><i class="fa-solid fa-key text-primary me-2"></i>Login Page</a></li>
+                        <li><a class="dropdown-item text-danger" href="/logout"><i class="fa-solid fa-right-from-bracket me-2"></i>Sign Out</a></li>
                     </ul>
                 </div>
 
                 <div class="d-flex align-items-center gap-2 border-start ps-3">
                     <div class="text-end">
-                        <div class="fw-bold small">{{ user.name }}</div>
-                        <div class="text-muted" style="font-size: 0.75rem;">{{ user.email }}</div>
+                        <div class="fw-bold small">{{ user.name or 'Guest' }}</div>
+                        <div class="text-muted" style="font-size: 0.75rem;">{{ user.email or 'Not logged in' }}</div>
                     </div>
                     <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
                         <i class="fa-solid fa-user"></i>
                     </div>
+                    <a href="/logout" class="btn btn-sm btn-outline-danger ms-2 d-flex align-items-center gap-1" title="Sign Out">
+                        <i class="fa-solid fa-power-off"></i>
+                        <span class="d-none d-md-inline small">Sign Out</span>
+                    </a>
                 </div>
             </div>
         </div>

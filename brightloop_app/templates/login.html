@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In – Brightloop Software</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome 6 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bl-primary: #4f46e5;
+            --bl-primary-hover: #4338ca;
+            --bl-dark: #0f172a;
+            --bl-bg: #f8fafc;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bl-bg);
+            color: #1e293b;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+        .login-container {
+            max-width: 1050px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        .login-banner {
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%);
+            color: white;
+            padding: 48px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .login-form-area {
+            padding: 48px 44px;
+        }
+        .demo-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-bottom: 12px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            background: #ffffff;
+        }
+        .demo-card:hover {
+            border-color: var(--bl-primary);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.12);
+            transform: translateY(-2px);
+        }
+        .demo-card.active {
+            border-color: var(--bl-primary);
+            background: #f5f3ff;
+        }
+        .btn-bl-primary {
+            background-color: var(--bl-primary);
+            color: white;
+            font-weight: 600;
+            padding: 12px 20px;
+            border-radius: 10px;
+            transition: background 0.2s;
+        }
+        .btn-bl-primary:hover {
+            background-color: var(--bl-primary-hover);
+            color: white;
+        }
+        .badge-role {
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+        .credential-code {
+            font-family: SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            background: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-container">
+    <div class="row g-0">
+        <!-- Left Side: Brand Banner & Credentials Directory -->
+        <div class="col-lg-5 login-banner">
+            <div>
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <div class="bg-primary text-white rounded-3 p-2 d-flex align-items-center justify-content-center" style="width: 44px; height: 44px;">
+                        <i class="fa-solid fa-arrows-spin fs-4"></i>
+                    </div>
+                    <div>
+                        <h4 class="fw-bold mb-0 text-white">Brightloop</h4>
+                        <span class="text-indigo-200 small" style="color: #a5b4fc;">Subscription Management</span>
+                    </div>
+                </div>
+
+                <h5 class="fw-bold text-white mb-2">Hackathon Demonstration Accounts</h5>
+                <p class="small text-white-50 mb-4">
+                    Click any pre-configured role below to automatically fill the credentials and sign in:
+                </p>
+
+                <!-- 1. Admin Role Card -->
+                <div class="demo-card" onclick="selectCredential('admin@brightloop.com', 'BrightLoop@Admin2026!', 'admin')">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="fw-bold text-dark"><i class="fa-solid fa-crown text-danger me-1"></i> Administrator</span>
+                        <span class="badge bg-danger-subtle text-danger badge-role">Full Access</span>
+                    </div>
+                    <div class="small text-muted mb-1">Email: <span class="credential-code text-dark">admin@brightloop.com</span></div>
+                    <div class="small text-muted">Password: <span class="credential-code text-dark">BrightLoop@Admin2026!</span></div>
+                </div>
+
+                <!-- 2. Staff Role Card -->
+                <div class="demo-card" onclick="selectCredential('staff@brightloop.com', 'BrightLoop@Staff2026!', 'staff')">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="fw-bold text-dark"><i class="fa-solid fa-id-badge text-primary me-1"></i> Internal Staff</span>
+                        <span class="badge bg-primary-subtle text-primary badge-role">Operations &amp; Billing</span>
+                    </div>
+                    <div class="small text-muted mb-1">Email: <span class="credential-code text-dark">staff@brightloop.com</span></div>
+                    <div class="small text-muted">Password: <span class="credential-code text-dark">BrightLoop@Staff2026!</span></div>
+                </div>
+
+                <!-- 3. Customer Role Card -->
+                <div class="demo-card" onclick="selectCredential('billing@zenithinfotech.in', 'Zenith@Customer2026!', 'customer')">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="fw-bold text-dark"><i class="fa-solid fa-user text-success me-1"></i> Customer (Portal)</span>
+                        <span class="badge bg-success-subtle text-success badge-role">Client Self-Service</span>
+                    </div>
+                    <div class="small text-muted mb-1">Email: <span class="credential-code text-dark">billing@zenithinfotech.in</span></div>
+                    <div class="small text-muted">Password: <span class="credential-code text-dark">Zenith@Customer2026!</span></div>
+                </div>
+            </div>
+
+            <!-- Password Policy Reminder -->
+            <div class="pt-4 border-top border-white-10 text-white-50 small" style="border-color: rgba(255,255,255,0.15) !important;">
+                <div class="fw-bold text-white mb-1"><i class="fa-solid fa-shield-halved text-success me-1"></i> Password Complexity Enforced:</div>
+                <div>&bull; Strictly &gt; 8 characters &bull; 1 uppercase (A-Z)</div>
+                <div>&bull; 1 lowercase (a-z) &bull; 1 special char (!@#$%^&*)</div>
+            </div>
+        </div>
+
+        <!-- Right Side: Login Form -->
+        <div class="col-lg-7 login-form-area d-flex flex-column justify-content-center">
+            <div class="mb-4">
+                <h3 class="fw-bold text-dark mb-1">Welcome Back</h3>
+                <p class="text-muted">Sign in to your Brightloop Software workspace to continue.</p>
+            </div>
+
+            {% if error %}
+            <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center gap-2 mb-4" role="alert">
+                <i class="fa-solid fa-triangle-exclamation text-danger fs-5"></i>
+                <div>{{ error }}</div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            {% endif %}
+
+            <form action="/login" method="post" id="loginForm">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold small text-dark">Email Address</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0"><i class="fa-regular fa-envelope text-muted"></i></span>
+                        <input type="email" name="email" id="emailInput" class="form-control border-start-0 ps-1" required placeholder="name@company.com" value="{{ email or '' }}">
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <label class="form-label fw-semibold small text-dark">Password</label>
+                        <span class="small text-muted" title="Password reset link will be sent to registered email">Forgot password?</span>
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0"><i class="fa-solid fa-lock text-muted"></i></span>
+                        <input type="password" name="password" id="passwordInput" class="form-control border-start-0 border-end-0 ps-1" required placeholder="Enter your password">
+                        <button class="btn btn-outline-secondary border-start-0" type="button" onclick="togglePasswordVisibility()">
+                            <i class="fa-regular fa-eye" id="eyeIcon"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="rememberMe" checked>
+                        <label class="form-check-label small text-muted" for="rememberMe">Remember this browser</label>
+                    </div>
+                    <span class="badge bg-light text-muted border"><i class="fa-solid fa-lock text-success me-1"></i> SSL 256-Bit</span>
+                </div>
+
+                <button type="submit" class="btn btn-bl-primary w-100 d-flex align-items-center justify-content-center gap-2 shadow-sm">
+                    <i class="fa-solid fa-right-to-bracket"></i>
+                    <span>Sign In to System</span>
+                </button>
+            </form>
+
+            <div class="mt-4 pt-3 border-top text-center text-muted small">
+                Brightloop Software Platform &bull; Powered by Odoo ORM &amp; PostgreSQL 18
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Auto-fill Script -->
+<script>
+    function selectCredential(email, password, role) {
+        document.getElementById('emailInput').value = email;
+        document.getElementById('passwordInput').value = password;
+        
+        // Highlight active card
+        document.querySelectorAll('.demo-card').forEach(c => c.classList.remove('active'));
+        if (event && event.currentTarget) {
+            event.currentTarget.classList.add('active');
+        }
+    }
+
+    function togglePasswordVisibility() {
+        const pwd = document.getElementById('passwordInput');
+        const eye = document.getElementById('eyeIcon');
+        if (pwd.type === 'password') {
+            pwd.type = 'text';
+            eye.classList.remove('fa-eye');
+            eye.classList.add('fa-eye-slash');
+        } else {
+            pwd.type = 'password';
+            eye.classList.remove('fa-eye-slash');
+            eye.classList.add('fa-eye');
+        }
+    }
+</script>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

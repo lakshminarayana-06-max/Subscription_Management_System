@@ -45,8 +45,56 @@ def get_current_user():
     return CURRENT_SESSION
 
 # ==========================================
-# AUTH & ROLE SWITCHING (FOR HACKATHON DEMO)
+# AUTHENTICATION & LOGIN / LOGOUT
 # ==========================================
+@app.get("/login", response_class=HTMLResponse)
+def login_page(request: Request, error: str = None):
+    return templates.TemplateResponse("login.html", {
+        "request": request,
+        "error": error,
+        "email": ""
+    })
+
+@app.post("/login")
+def login_submit(request: Request, email: str = Form(...), password: str = Form(...)):
+    user = authenticate_user(email.strip(), password)
+    if not user:
+        return templates.TemplateResponse("login.html", {
+            "request": request,
+            "error": "Invalid email or password. Please verify credentials and try again.",
+            "email": email.strip()
+        }, status_code=400)
+
+    global CURRENT_SESSION
+    CURRENT_SESSION = {
+        'user_id': user['id'],
+        'name': user['name'],
+        'email': user['login'],
+        'role': user['role'],
+        'partner_id': None
+    }
+    if user['role'] == 'customer':
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                cur.execute("SELECT id FROM res_partner WHERE LOWER(email) = LOWER(%s) LIMIT 1;", (user['login'].strip().lower(),))
+                p = cur.fetchone()
+                CURRENT_SESSION['partner_id'] = p[0] if p else 1
+        return RedirectResponse(url="/portal", status_code=303)
+
+    return RedirectResponse(url="/" if user['role'] != 'customer' else "/portal", status_code=303)
+
+@app.get("/logout")
+def logout():
+    global CURRENT_SESSION
+    CURRENT_SESSION = {
+        'user_id': None,
+        'name': 'Guest',
+        'email': None,
+        'role': None,
+        'partner_id': None
+    }
+    return RedirectResponse(url="/login", status_code=303)
+
 @app.get("/switch-role/{role}")
 def switch_role(role: str):
     """Allows instant role switching to test RBAC and customer portal isolation."""
@@ -85,6 +133,8 @@ def switch_role(role: str):
 @app.get("/", response_class=HTMLResponse)
 def dashboard(request: Request, time_filter: str = "this_month"):
     user = get_current_user()
+    if not user or not user.get('user_id'):
+        return RedirectResponse(url="/login", status_code=303)
     if user['role'] == 'customer':
         return RedirectResponse(url="/portal", status_code=303)
 
@@ -863,6 +913,8 @@ def settings_page(request: Request):
 @app.get("/portal", response_class=HTMLResponse)
 def portal_home(request: Request):
     user = get_current_user()
+    if not user or not user.get('user_id'):
+        return RedirectResponse(url="/login", status_code=303)
     with get_db() as conn:
         with conn.cursor(cursor_factory=RealDictCursor) as cur:
             # Query customer partner ID
